@@ -3,3 +3,5 @@ applications:
  - name: GetStartedSwift
    random-route: true
    memory: 256M
+   command: kitura-helloworld
+   buildpack: swift_buildpack

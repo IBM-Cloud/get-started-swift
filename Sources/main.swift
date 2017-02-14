@@ -15,10 +15,11 @@
  */
 import Kitura
 import Foundation
-
+import LoggerAPI
 import HeliumLogger
+import CloudFoundryEnv
 
-HeliumLogger.use()
+HeliumLogger.use(LoggerMessageType.info)
 
 let router = Router()
 
@@ -42,15 +43,20 @@ router.post("/api/visitors") { request, response, next in
 
 router.all("/", middleware: StaticFileServer())
 
-// Use port 8090 unless overridden by environment variable
-let port = Int(ProcessInfo.processInfo.environment["PORT"] ?? "8090") ?? 8090
-
-Kitura.addHTTPServer(onPort: port, with: router)
-Kitura.run()
-
-//TODO: Cloudant Connection
-//let url = URL(fileURLWithPath: finalPath)
-//       let configData = try Data(contentsOf: url)
-//       let configJson = JSON(data: configData)
-//       appEnv = try CloudFoundryEnv.getAppEnv(options: configJson)
-//TODO
+do {
+  let appEnv: AppEnv
+  let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized
+  if let configData = try? Data(contentsOf: configFile), let configJson = try JSONSerialization.jsonObject(with: configData, options: []) as? [String:Any] {
+    Log.info("Configuration file found: \(configFile)")
+    appEnv = try CloudFoundryEnv.getAppEnv(options: configJson)
+  }
+  else {
+    Log.info("No configuration file found.")
+    appEnv = try CloudFoundryEnv.getAppEnv()
+  }
+  Kitura.addHTTPServer(onPort: appEnv.port, with: router)
+  Kitura.run()
+} catch let error {
+  Log.error(error.localizedDescription)
+  Log.error("Oops... something went wrong. Server did not start!")
+}

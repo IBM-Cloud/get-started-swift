@@ -1,1 +1,0 @@
-web: kitura-helloworld
