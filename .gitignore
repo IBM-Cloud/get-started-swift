@@ -1,4 +1,4 @@
 .build/*
 Packages/*
-BluePic-server.xcodeproj/*
+kitura-helloworld.xcodeproj/*
 *.DS_Store
