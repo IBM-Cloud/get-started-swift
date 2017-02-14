@@ -81,46 +81,41 @@ The manifest.yml includes basic information about your app, such as the name, ho
  ```
  {: codeblock}
 
- ## 4. Deploy the app
- {: #deploy}
+## 4. Deploy the app
+{: #deploy}
 
- You can use the Cloud Foundry CLI to deploy apps.
+You can use the Cloud Foundry CLI to deploy apps.
 
- Choose your API endpoint
-    ```
- cf api <API-endpoint>
-    ```
-    {: pre}
+Choose your API endpoint
+  ```
+cf api <API-endpoint>
+  ```
+  {: pre}
 
- Replace the *API-endpoint* in the command with an API endpoint from the following list.
+Replace the *API-endpoint* in the command with an API endpoint from the following list.
 
- |URL                             |Region          |
- |:-------------------------------|:---------------|
- | https://api.ng.bluemix.net     | US South       |
- | https://api.eu-gb.bluemix.net  | United Kingdom |
- | https://api.au-syd.bluemix.net | Sydney         |
+|URL                             |Region          |
+|:-------------------------------|:---------------|
+| https://api.ng.bluemix.net     | US South       |
+| https://api.eu-gb.bluemix.net  | United Kingdom |
+| https://api.au-syd.bluemix.net | Sydney         |
 
- Login to your {{site.data.keyword.Bluemix_notm}} account
+Login to your {{site.data.keyword.Bluemix_notm}} account
 
    ```
  cf login
    ```
    {: pre}
 
- From within the *get-started-swift* directory push your app to {{site.data.keyword.Bluemix_notm}}
+From within the *get-started-swift* directory push your app to {{site.data.keyword.Bluemix_notm}}
    ```
  cf push
    ```
    {: pre}
 
- This can take a minute. If there is an error in the deployment process you can use the command `cf logs <Your-App-Name> --recent` to troubleshoot.
+This can take a minute. If there is an error in the deployment process you can use the command `cf logs <Your-App-Name> --recent` to troubleshoot.
 
- When deployment completes you should see a message indicating that your app is running.  View your app at the URL listed in the output of the push command.  You can also issue the
-   ```
- cf apps
-   ```
-   {: pre}
-   command to view your apps status and see the URL.
+When deployment completes you should see a message indicating that your app is running.  View your app at the URL listed in the output of the push command.  You can also issue the `cf apps` command to view your apps status and see the URL.
 
 ## 5. Add a database
 {: #add_database}
