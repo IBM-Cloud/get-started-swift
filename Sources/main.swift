@@ -15,8 +15,10 @@
  */
 import Kitura
 import Foundation
-
 import HeliumLogger
+import Configuration
+import CloudFoundryEnv
+import CloudFoundryConfig
 
 HeliumLogger.use()
 
@@ -42,8 +44,28 @@ router.post("/api/visitors") { request, response, next in
 
 router.all("/", middleware: StaticFileServer())
 
-// Use port 8090 unless overridden by environment variable
-let port = Int(ProcessInfo.processInfo.environment["PORT"] ?? "8090") ?? 8090
+////
+let manager = ConfigurationManager()
+let filePath = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized.path
+print("filePath: \(filePath)")
+let fileManager = FileManager.default
+ if fileManager.fileExists(atPath: filePath) {
+   try manager.load(file: filePath)
+   print("found")
+ } else {
+   print("not found")
+   manager.load(.environmentVariables)
+ }
+let appEnv = try CloudFoundryEnv.getAppEnv(configManager: manager)
+let port = appEnv.port
+
+let cloudantService = try manager.getCloudantService(name: "CloudantService")
+print("\(cloudantService.host)")
+print("\(cloudantService.username)")
+print("\(cloudantService.password)")
+print("\(cloudantService.port)")
+print("\(cloudantService.url)")
+////
 
 Kitura.addHTTPServer(onPort: port, with: router)
 Kitura.run()
