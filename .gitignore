@@ -1,0 +1,4 @@
+.build/*
+Packages/*
+BluePic-server.xcodeproj/*
+*.DS_Store
