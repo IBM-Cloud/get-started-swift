@@ -1,46 +1,48 @@
 {
-  "VCAP_SERVICES": {
-    "cloudantNoSQLDB": [
-      {
-        "credentials": {
-          "host": "<host>",
-          "password": "<password>",
-          "port": 443,
-          "url": "<url>",
-          "username": "<username>"
-        },
-        "label": "cloudantNoSQLDB",
-        "name": "CloudantService",
-        "plan": "Lite",
-        "provider": null,
-        "syslog_drain_url": null,
-        "tags": [
-          "data_management",
-          "ibm_created",
-          "ibm_dedicated_public"
-        ]
-      }
-    ]
-  },
-  "VCAP_APPLICATION": {
-    "application_id": "ad28c3b1-744d-446e-bf6e-80d8b716916e",
-    "application_name": "kitura-helloworld",
-    "application_uris": [
-      "kitura-helloworld-undissevered-bumper.mybluemix.net"
-    ],
-    "application_version": "1fc300f0-d7cc-4cab-b5cc-748c3fdd10e4",
-    "limits": {
-      "disk": 1024,
-      "fds": 16384,
-      "mem": 256
+  "vcap": {
+    "services": {
+      "cloudantNoSQLDB": [
+        {
+          "credentials": {
+            "host": "<host>",
+            "password": "<password>",
+            "port": 443,
+            "url": "<url>",
+            "username": "<username>"
+          },
+          "label": "cloudantNoSQLDB",
+          "name": "CloudantService",
+          "plan": "Lite",
+          "provider": null,
+          "syslog_drain_url": null,
+          "tags": [
+            "data_management",
+            "ibm_created",
+            "ibm_dedicated_public"
+          ]
+        }
+      ]
     },
-    "name": "kitura-helloworld",
-    "space_id": "07628d09-5236-4dc0-9330-4388567b33ce",
-    "space_name": "dev",
-    "uris": [
-      "kitura-helloworld-undissevered-bumper.mybluemix.net"
-    ],
-    "users": null,
-    "version": "1fc300f0-d7cc-4cab-b5cc-748c3fdd10e4"
+    "application": {
+      "application_id": "ad28c3b1-744d-446e-bf6e-80d8b716916e",
+      "application_name": "kitura-helloworld",
+      "application_uris": [
+        "kitura-helloworld-undissevered-bumper.mybluemix.net"
+      ],
+      "application_version": "1fc300f0-d7cc-4cab-b5cc-748c3fdd10e4",
+      "limits": {
+        "disk": 1024,
+        "fds": 16384,
+        "mem": 256
+      },
+      "name": "kitura-helloworld",
+      "space_id": "07628d09-5236-4dc0-9330-4388567b33ce",
+      "space_name": "dev",
+      "uris": [
+        "kitura-helloworld-undissevered-bumper.mybluemix.net"
+      ],
+      "users": null,
+      "version": "1fc300f0-d7cc-4cab-b5cc-748c3fdd10e4"
+    }
   }
 }
