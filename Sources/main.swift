@@ -18,8 +18,77 @@ import Foundation
 import LoggerAPI
 import HeliumLogger
 import CloudFoundryEnv
+import SwiftyJSON
+import CouchDB
 
 HeliumLogger.use(LoggerMessageType.info)
+
+//
+//default values
+var appPort = 8090
+var dbHost = "localhost"
+var dbPort = Int16(5432)
+var dbUsername = "root"
+var dbPassword = "password"
+var dbName = "mydb"
+
+do {
+   //
+   // get the app environment variables
+
+   let appEnv: AppEnv
+   let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized
+   if let configData = try? Data(contentsOf: configFile), let configJson = try JSONSerialization.jsonObject(with: configData, options: []) as? [String:Any] {
+      Log.info("Configuration file found: \(configFile)")
+      appEnv = try CloudFoundryEnv.getAppEnv(options: configJson)
+   }
+   else {
+      Log.info("No configuration file found.")
+      appEnv = try CloudFoundryEnv.getAppEnv()
+   }
+
+   // get the port from configuration file
+   appPort = appEnv.port
+
+  //
+  // get database connection details from cfenv
+
+  if let database = appEnv.getService(spec: "Cloudant NoSQL DB") {
+     print("Found the database! \(database)")
+
+     if let credentials = database.credentials {
+
+          dbHost = credentials["host"] as! String
+          dbPort = credentials["port"] as! Int16
+          dbUsername = credentials["username"] as! String
+          dbPassword = credentials["password"] as! String
+    }
+
+  } else {
+     Log.verbose("Could not find your database, using default database")
+  }
+
+} catch let error {
+
+  Log.error(error.localizedDescription)
+  Log.error("Oops... something went wrong. Server did not start!")
+  fatalError()
+}
+
+//
+//Set up Connection to database
+
+let connectionProperties = ConnectionProperties(host: dbHost,
+                                                  port: Int16(dbPort),
+                                                  secured: true,
+                                                  username: dbUsername,
+                                                  password: dbPassword)
+
+let couchDBClient = CouchDBClient(connectionProperties: connectionProperties)
+let database = couchDBClient.database(dbName)
+
+//
+//Set routes and define logic
 
 let router = Router()
 
@@ -34,29 +103,51 @@ router.post("/api/visitors") { request, response, next in
     switch(parsedBody) {
     case .json(let jsonBody):
             let name = jsonBody["name"].string ?? ""
-            try response.send("Hello \(name)!").end()
+            let json: [String: Any] = [
+                                        "name": name
+                                      ]
+
+            database.create(JSON(json), callback: {
+                    (id: String?, rev: String?, document: JSON?, error: NSError?) in
+
+                    if let error = error {
+                        Log.error(">> Oops something went wrong; could not persist document.")
+                        Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+                    } else {
+                        Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
+                        response.status(.OK).send("Hello \(name)! I added you to the database")
+
+                    }
+            })
+
     default:
         break
     }
     next()
 }
 
+router.get("/api/visitors") { _, response, next in
+
+   database.retrieveAll(includeDocuments: true) { docs, error in
+      guard let docs = docs else {
+         response.status(.badRequest)
+         return
+      }
+
+    Log.info(">> [GET] Successfully retrived all docs")
+
+    let names = docs["rows"].map { _, row in
+        return row["doc"]["name"].string ?? ""
+
+    }
+      response.status(.OK).send(json: JSON(names))
+      next()
+   }
+}
+
+
 router.all("/", middleware: StaticFileServer())
 
-do {
-  let appEnv: AppEnv
-  let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized
-  if let configData = try? Data(contentsOf: configFile), let configJson = try JSONSerialization.jsonObject(with: configData, options: []) as? [String:Any] {
-    Log.info("Configuration file found: \(configFile)")
-    appEnv = try CloudFoundryEnv.getAppEnv(options: configJson)
-  }
-  else {
-    Log.info("No configuration file found.")
-    appEnv = try CloudFoundryEnv.getAppEnv()
-  }
-  Kitura.addHTTPServer(onPort: appEnv.port, with: router)
-  Kitura.run()
-} catch let error {
-  Log.error(error.localizedDescription)
-  Log.error("Oops... something went wrong. Server did not start!")
-}
+Kitura.addHTTPServer(onPort: appPort, with: router)
+
+Kitura.run()
