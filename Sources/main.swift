@@ -24,7 +24,8 @@ import CouchDB
 HeliumLogger.use(LoggerMessageType.info)
 
 //
-//default values
+//default values. The DB values can get overwritten from VCAP_SERVICES env var or Sources/config.json
+
 var appPort = 8090
 var dbHost = "localhost"
 var dbPort = Int16(5432)
@@ -34,7 +35,7 @@ var dbName = "mydb"
 
 do {
    //
-   // get the app environment variables
+   // get the app environment variables from config.json or VCAP_SERVICES
 
    let appEnv: AppEnv
    let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized
@@ -69,7 +70,6 @@ do {
   }
 
 } catch let error {
-
   Log.error(error.localizedDescription)
   Log.error("Oops... something went wrong. Server did not start!")
   fatalError()
@@ -79,10 +79,10 @@ do {
 //Set up Connection to database
 
 let connectionProperties = ConnectionProperties(host: dbHost,
-                                                  port: Int16(dbPort),
-                                                  secured: true,
-                                                  username: dbUsername,
-                                                  password: dbPassword)
+                                                port: Int16(dbPort),
+                                                secured: true,
+                                                username: dbUsername,
+                                                password: dbPassword)
 
 let couchDBClient = CouchDBClient(connectionProperties: connectionProperties)
 let database = couchDBClient.database(dbName)
@@ -111,12 +111,11 @@ router.post("/api/visitors") { request, response, next in
                     (id: String?, rev: String?, document: JSON?, error: NSError?) in
 
                     if let error = error {
-                        Log.error(">> Oops something went wrong; could not persist document.")
-                        Log.error("Error: \(error.localizedDescription) Code: \(error.code)")
+                        Log.error(">> Could not persist document to database.")
+                        response.status(.OK).send("Hello \(name)!")
                     } else {
                         Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
                         response.status(.OK).send("Hello \(name)! I added you to the database")
-
                     }
             })
 
@@ -134,7 +133,7 @@ router.get("/api/visitors") { _, response, next in
          return
       }
 
-    Log.info(">> [GET] Successfully retrived all docs")
+    Log.info(">> [GET] Successfully retrieved all docs")
 
     let names = docs["rows"].map { _, row in
         return row["doc"]["name"].string ?? ""
