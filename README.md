@@ -65,7 +65,7 @@ Server is listening on port: 8080
 ```
 {: screen}
 
-View your app at: http://localhost:8090
+View your app at: http://localhost:8080
 
 ## 3. Prepare the app for deployment
 {: #prepare}
@@ -124,45 +124,57 @@ Next, we'll add a NoSQL database to this application and set up the application 
 
 1. Log in to {{site.data.keyword.Bluemix_notm}} in your Browser. Browse to the `Dashboard`. Select your application by clicking on its name in the `Name` column.
 2. Click on `Connections` then `Connect new`.
-2. In the `Data & Analytics` section, select `Cloudant NoSQL DB` and `Create` the service.
-3. Select `Restage` when prompted. {{site.data.keyword.Bluemix_notm}} will restart your application and provide the database credentials to your application using the `VCAP_SERVICES` environment variable. This environment variable is only available to the application when it is running on {{site.data.keyword.Bluemix_notm}}.
+3. In the `Data & Analytics` section, select `Cloudant NoSQL DB`
+4. Select a pricing plan. Bluemix offers free `Lite` plans for a select collection of its cloud services with enough capacity to get you started
+5. Select `Restage` when prompted. {{site.data.keyword.Bluemix_notm}} will restart your application and provide the database credentials to your application using the `VCAP_SERVICES` environment variable. This environment variable is only available to the application when it is running on {{site.data.keyword.Bluemix_notm}}.
 
 Environment variables enable you to separate deployment settings from your source code. For example, instead of hardcoding a database password, you can store this in an environment variable which you reference in your source code. [Learn more...](/docs/manageapps/depapps.html#app_env)
 {: tip}
 
 ## 6. Use the database
 {: #use_database}
-We're now going to update your local code to point to this database. We'll create a json file that will store the credentials for the services the application will use. This file will get used ONLY when the application is running locally. When running in {{site.data.keyword.Bluemix_notm}}, the credentials will be read from the VCAP_SERVICES environment variable.
+We're now going to update your local code to point to this database. Create a json file that will store the credentials for the services the application will use. This file will get used ONLY when the application is running locally. When running in {{site.data.keyword.Bluemix_notm}}, the credentials will be read from the VCAP_SERVICES environment variable.
 
-1. Create a file called `vcap-local.json` in the `get-started-swift` directory with the following content:
+1. Create a file called `config.json` in the `Sources` directory with the following content:
  ```
  {
-   "services": {
-     "cloudantNoSQLDB": [
-       {
-         "credentials": {
-           "url":"CLOUDANT_DATABASE_URL"
-         },
-         "label": "cloudantNoSQLDB"
-       }
-     ]
-   }
- }
+  "vcap": {
+    "services": {
+      "cloudantNoSQLDB": [
+        {
+          "credentials":                 {
+            "host": "<enter host>",
+            "password": "<enter password>",
+            "port": 443,
+            "username": "<enter username>",
+          },
+          "label": "cloudantNoSQLDB",
+          "name": "Cloudant NoSQL DB"
+        }
+      ]
+    }
+  }
+}
+ 
  ```
+ This sample application uses the Swift-cfenv package to interact with Bluemix to parse environment variables. [Learn more...](https://packagecatalog.com/package/IBM-Swift/Swift-cfenv)
+ 
  {: pre}
 
 2. Back in the {{site.data.keyword.Bluemix_notm}} UI, select your App -> Connections -> Cloudant -> View Credentials
 
-3. ********************* TODO *********************
+3. Copy and paste just the credentials to fields in your local config.json file.
 
 4. Run your application locally.
  ```
-npm start  
+swift build  
  ```
  {: pre}
 
- View your app at: http://localhost:8090. Any names you enter into the app will now get added to the database.
-
+ View your app at: http://localhost:8080. Any names you enter into the app will now get added to the database.
+ 
+ This sample application uses the Kitura-CouchDB package to interact with Cloudant. [Learn more...](https://packagecatalog.com/package/IBM-Swift/Kitura-CouchDB)
+ 
 5. Make any changes you want and re-deploy to {{site.data.keyword.Bluemix_notm}}!
  ```
 cf push
