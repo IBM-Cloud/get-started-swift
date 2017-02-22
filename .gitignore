@@ -2,3 +2,4 @@
 Packages/*
 kitura-helloworld.xcodeproj/*
 *.DS_Store
+Sources/config.json.example
