@@ -130,21 +130,22 @@ router.post("/api/visitors") { request, response, next in
 
 router.get("/api/visitors") { _, response, next in
 
-   database.retrieveAll(includeDocuments: true) { docs, error in
+    database.retrieveAll(includeDocuments: true) { docs, error in
+
       guard let docs = docs else {
-         response.status(.badRequest)
-         return
+          Log.error(">> Could not read from database or none exists.")
+          response.status(.badRequest).send("Error could not read from database or none exists")
+          return
       }
+      Log.info(">> Successfully retrived all docs from Database")
 
-    Log.info(">> [GET] Successfully retrieved all docs")
-
-    let names = docs["rows"].map { _, row in
-        return row["doc"]["name"].string ?? ""
-
-    }
+      let names = docs["rows"].map { _, row in
+          return row["doc"]["name"].string ?? ""
+      }
+      
       response.status(.OK).send(json: JSON(names))
-      next()
    }
+   next()
 }
 
 
