@@ -27,10 +27,10 @@ HeliumLogger.use(LoggerMessageType.info)
 //default values. The DB values can get overwritten from VCAP_SERVICES env var or Sources/config.json
 
 var appPort = 8090
-var dbHost = "localhost"
-var dbPort = Int16(5432)
-var dbUsername = "root"
-var dbPassword = "password"
+var dbHost = ""
+var dbPort = Int16(443)
+var dbUsername = ""
+var dbPassword = ""
 var dbName = "mydb"
 
 do {
@@ -61,11 +61,10 @@ do {
      print("Found the database! \(database)")
 
      if let credentials = database.credentials {
-
           dbHost = credentials["host"] as! String
-          dbPort = credentials["port"] as! Int16
           dbUsername = credentials["username"] as! String
           dbPassword = credentials["password"] as! String
+          // dbPort = ...
     }
 
   } else {
@@ -142,7 +141,7 @@ router.get("/api/visitors") { _, response, next in
       let names = docs["rows"].map { _, row in
           return row["doc"]["name"].string ?? ""
       }
-      
+
       response.status(.OK).send(json: JSON(names))
    }
    next()
