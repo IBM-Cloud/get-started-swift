@@ -10,7 +10,8 @@
                    "url":"<url>",
                    "username":"<username>"
                 },
-                "label":"cloudantNoSQLDB"
+                "label":"cloudantNoSQLDB",
+                "name": "CloudantService"
              }
           ]
        }

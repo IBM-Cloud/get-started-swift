@@ -52,9 +52,12 @@ do {
    appPort = appEnv.port
 
   //
-  // get database connection details from cfenv
+  // get database connection details from cfenv. This will look for VCAP_SERVICES first, and then config.json
 
-  if let database = appEnv.getService(spec: "Cloudant NoSQL DB") {
+  let services = appEnv.getServices()
+  let servicePair = services.filter { element in element.value.label == "cloudantNoSQLDB" }.first
+
+  if let database = servicePair?.value {
      print("Found the database! \(database)")
 
      if let credentials = database.credentials {
@@ -66,7 +69,7 @@ do {
     }
 
   } else {
-     Log.verbose("Could not find your database, using default database")
+     print("Could not find your database.")
   }
 
 } catch let error {
