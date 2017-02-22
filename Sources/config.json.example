@@ -1,0 +1,18 @@
+{
+    "vcap":{
+       "services":{
+          "cloudantNoSQLDB":[
+             {
+                "credentials":{
+                   "host":"<host>",
+                   "password":"<password>",
+                   "port":443,
+                   "url":"<url>",
+                   "username":"<username>"
+                },
+                "label":"cloudantNoSQLDB"
+             }
+          ]
+       }
+    }
+ }
