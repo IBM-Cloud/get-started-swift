@@ -133,32 +133,32 @@ Environment variables enable you to separate deployment settings from your sourc
 
 ## 6. Use the database
 {: #use_database}
+
 We're now going to update your local code to point to this database. Create a json file that will store the credentials for the services the application will use. This file will get used ONLY when the application is running locally. When running in {{site.data.keyword.Bluemix_notm}}, the credentials will be read from the VCAP_SERVICES environment variable.
 
-1. Create a file called `config.json` in the `Sources` directory with the following content:
+1. Create a file called `config.json` in the `Sources` directory with the following content (see config.json.example):
  ```
  {
-  "vcap": {
-    "services": {
-      "cloudantNoSQLDB": [
-        {
-          "credentials":                 {
-            "host": "<enter host>",
-            "password": "<enter password>",
-            "port": 443,
-            "username": "<enter username>",
-          },
-          "label": "cloudantNoSQLDB",
-          "name": "Cloudant NoSQL DB"
-        }
-      ]
+    "vcap":{
+       "services":{
+          "cloudantNoSQLDB":[
+             {
+                "credentials":{
+                   "host":"<host>",
+                   "password":"<password>",
+                   "port":443,
+                   "url":"<url>",
+                   "username":"<username>"
+                },
+                "label":"cloudantNoSQLDB"
+             }
+          ]
+       }
     }
-  }
-}
- 
+ }
  ```
  This sample application uses the Swift-cfenv package to interact with Bluemix to parse environment variables. [Learn more...](https://packagecatalog.com/package/IBM-Swift/Swift-cfenv)
- 
+
  {: pre}
 
 2. Back in the {{site.data.keyword.Bluemix_notm}} UI, select your App -> Connections -> Cloudant -> View Credentials
@@ -172,9 +172,9 @@ swift build
  {: pre}
 
  View your app at: http://localhost:8080. Any names you enter into the app will now get added to the database.
- 
+
  This sample application uses the Kitura-CouchDB package to interact with Cloudant. [Learn more...](https://packagecatalog.com/package/IBM-Swift/Kitura-CouchDB)
- 
+
 5. Make any changes you want and re-deploy to {{site.data.keyword.Bluemix_notm}}!
  ```
 cf push
