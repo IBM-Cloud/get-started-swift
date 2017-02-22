@@ -150,7 +150,8 @@ We're now going to update your local code to point to this database. Create a js
                    "url":"<url>",
                    "username":"<username>"
                 },
-                "label":"cloudantNoSQLDB"
+                "label":"cloudantNoSQLDB",
+                "name":"cloudantService"
              }
           ]
        }
