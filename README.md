@@ -158,9 +158,9 @@ We're now going to update your local code to point to this database. Create a js
     }
  }
  ```
- This sample application uses the Swift-cfenv package to interact with Bluemix to parse environment variables. [Learn more...](https://packagecatalog.com/package/IBM-Swift/Swift-cfenv)
+{: pre}
 
- {: pre}
+ This sample application uses the Swift-cfenv package to interact with Bluemix to parse environment variables. [Learn more...](https://packagecatalog.com/package/IBM-Swift/Swift-cfenv)
 
 2. Back in the {{site.data.keyword.Bluemix_notm}} UI, select your App -> Connections -> Cloudant -> View Credentials
 
