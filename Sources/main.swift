@@ -33,7 +33,7 @@ HeliumLogger.use(LoggerMessageType.info)
 do {
   // Get the app environment variables from config.json or VCAP_SERVICES
   let appEnv: AppEnv
-  let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json.example").standardized
+  let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized
   if let configData = try? Data(contentsOf: configFile), let configJson = try JSONSerialization.jsonObject(with: configData, options: []) as? [String : Any] {
     Log.info("Configuration file found: \(configFile)")
     appEnv = try CloudFoundryEnv.getAppEnv(options: configJson)
