@@ -44,9 +44,23 @@
         				})
               .done(function(data) {
                   $('#response').html(data);
+                  $('#nameInput').hide();
+                    getNames();
               });
             }
         });
+
+        //Retreive all the visitors from the database
+        function getNames(){
+          $.get("./api/visitors")
+              .done(function(data) {
+                  if(data.length > 0) {
+                    $('#databaseNames').html("Database contents: " + JSON.stringify(data));
+                  }
+              });
+          }
+          //Call getNames on page load.
+          getNames();
     </script>
 </body>
 
