@@ -64,9 +64,7 @@ do {
           dbHost = credentials["host"] as! String
           dbUsername = credentials["username"] as! String
           dbPassword = credentials["password"] as! String
-          // dbPort = ...
     }
-
   } else {
      print("Could not find your database.")
   }
@@ -87,7 +85,14 @@ let connectionProperties = ConnectionProperties(host: dbHost,
                                                 password: dbPassword)
 
 let couchDBClient = CouchDBClient(connectionProperties: connectionProperties)
-let database = couchDBClient.database(dbName)
+
+var database = couchDBClient.database(dbName)
+couchDBClient.createDB(dbName, callback: {
+            db, error in
+            if (db != nil) {
+                database = db!
+            }
+        })
 
 //
 //Set routes and define logic
@@ -136,7 +141,6 @@ router.get("/api/visitors") { _, response, next in
           response.status(.badRequest).send("Error could not read from database or none exists")
           return
       }
-      Log.info(">> Successfully retrived all docs from Database")
 
       let names = docs["rows"].map { _, row in
           return row["doc"]["name"].string ?? ""
