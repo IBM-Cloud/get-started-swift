@@ -71,7 +71,7 @@ public class Controller {
       couchDBClient.createDB(dbName, callback: {
            db, error in
            if (db != nil) {
-               database = db!
+               print("Created db")
            }
        })
 
