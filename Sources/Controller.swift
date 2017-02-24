@@ -31,7 +31,7 @@ public class Controller {
   let router: Router
   let appEnv: AppEnv
   let dbName = "mydb"
-  let database: Database?
+  var database: Database?
 
   var port: Int {
     get { return appEnv.port }
@@ -68,6 +68,13 @@ public class Controller {
 
       let couchDBClient = CouchDBClient(connectionProperties: connectionProperties)
       database = couchDBClient.database(dbName)
+      couchDBClient.createDB(dbName, callback: {
+           db, error in
+           if (db != nil) {
+               database = db!
+           }
+       })
+
     } else {
       database = nil
       Log.warning("Could not find Cloudant service.")
@@ -78,6 +85,20 @@ public class Controller {
 
    router.all("/api/visitors", middleware: BodyParser())
 
+ /**
+  * Creates a new Visitor.
+  *
+  * REST API example:
+  * <code>
+  * POST http://localhost:8080/api/visitors
+  * <code>
+  * POST Body:
+  * <code>
+  * {
+  *   "name":"Bob"
+  * }
+  * </code>
+  */
    router.post("/api/visitors") { request, response, next in
      guard let parsedBody = request.body else {
        next()
@@ -89,7 +110,11 @@ public class Controller {
          let name = jsonBody["name"].string ?? ""
          let json: [String: Any] = [ "name": name ]
 
-         // if database is nil... request won't be handled...
+         if(self.database == nil) {
+            Log.error(">> No database")
+            response.status(.OK).send("Hello \(name)!")
+            break;
+         }
          self.database?.create(JSON(json), callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
            if let _ = error {
              Log.error(">> Could not persist document to database.")
@@ -106,8 +131,27 @@ public class Controller {
      next()
    }
 
+ /**
+  * Gets all Visitors.
+  * REST API example:
+  * <code>
+  * GET http://localhost:8080/api/visitors
+  * </code>
+  *
+  * Response:
+  * <code>
+  * [ "Bob", "Jane" ]
+  * </code>
+  * @return An array of all the Visitors
+  */
    router.get("/api/visitors") { _, response, next in
-     // if database is nil... request won't be handled...
+     //If no database, return empty array.
+     guard let _ = self.database else {
+        Log.error(">> No database")
+        response.status(.OK).send(json: JSON([]))
+        next()
+        return
+     }
      self.database?.retrieveAll(includeDocuments: true) { docs, error in
        guard let docs = docs else {
          Log.error(">> Could not read from database or none exists.")
