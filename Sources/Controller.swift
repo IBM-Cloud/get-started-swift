@@ -49,7 +49,11 @@ public class Controller {
     }
 
     // Get database connection details...
-    if let cloudantService = appEnv.getService(spec: "CloudantService") {
+    
+    let services = appEnv.getServices()
+    let servicePair = services.filter { element in element.value.label == "cloudantNoSQLDB" }.first
+
+    if let cloudantService = servicePair?.value {
       guard let credentials = cloudantService.credentials,
         let dbHost = credentials["host"] as? String,
         let dbUsername = credentials["username"] as? String,
