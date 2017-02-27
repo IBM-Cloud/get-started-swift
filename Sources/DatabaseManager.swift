@@ -32,11 +32,11 @@ class DatabaseManager {
     self.dbName = dbName
     // Get database connection details...
     if let cloudantServ = cloudantServ, let cloudantService = CloudantService(withService: cloudantServ) {
-      let connectionProperties = ConnectionProperties(host: cloudantService.host,
-        port: Int16(cloudantService.port),
-        secured: true,
-        username: cloudantService.username,
-        password: cloudantService.password)
+        let connectionProperties = ConnectionProperties(host: cloudantService.host,
+          port: Int16(cloudantService.port),
+          secured: true,
+          username: cloudantService.username,
+          password: cloudantService.password)
         self.dbClient = CouchDBClient(connectionProperties: connectionProperties)
     } else {
       Log.warning("Could not load Cloudant service metadata.")
