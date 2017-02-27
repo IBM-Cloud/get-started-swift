@@ -27,7 +27,7 @@ public class Controller {
   let router: Router
   private let configMgr: ConfigurationManager
   private let dbName = "mydb"
-  private var dbMgr: DatabaseManager? = nil
+  private let dbMgr: DatabaseManager?
 
   var port: Int {
     get { return configMgr.port }
@@ -41,18 +41,7 @@ public class Controller {
 
     // Get database connection details...
     let cloudantServ: Service? = configMgr.getServices(type: "cloudantNoSQLDB").first
-    if let serv = cloudantServ, let cloudantService = CloudantService(withService: serv) {
-      // Set up Connection to database
-      let connectionProperties = ConnectionProperties(host: cloudantService.host,
-        port: Int16(cloudantService.port),
-        secured: true,
-        username: cloudantService.username,
-        password: cloudantService.password)
-      let couchDBClient = CouchDBClient(connectionProperties: connectionProperties)
-      dbMgr = DatabaseManager(dbClient: couchDBClient, dbName: dbName)
-    } else {
-      Log.warning("Could not load Cloudant service and credentials metadata.")
-    }
+    dbMgr = DatabaseManager(dbName: dbName, cloudantServ: cloudantServ)
 
     // All web apps need a Router instance to define routes
     router = Router()

@@ -14,7 +14,10 @@
 * limitations under the License.
 */
 
+import CloudFoundryEnv
+import CloudFoundryConfig
 import CouchDB
+import LoggerAPI
 import Dispatch
 import Foundation
 
@@ -25,9 +28,20 @@ class DatabaseManager {
   private let semaphore = DispatchSemaphore(value: 1)
   private let dbName: String
 
-  init(dbClient: CouchDBClient, dbName: String) {
-    self.dbClient = dbClient
+  init?(dbName: String, cloudantServ: Service?) {
     self.dbName = dbName
+    // Get database connection details...
+    if let cloudantServ = cloudantServ, let cloudantService = CloudantService(withService: cloudantServ) {
+      let connectionProperties = ConnectionProperties(host: cloudantService.host,
+        port: Int16(cloudantService.port),
+        secured: true,
+        username: cloudantService.username,
+        password: cloudantService.password)
+        self.dbClient = CouchDBClient(connectionProperties: connectionProperties)
+    } else {
+      Log.warning("Could not load Cloudant service metadata.")
+      return nil
+    }
   }
 
   public func getDatabase(callback: @escaping (Database?, NSError?) -> ()) -> Void {
