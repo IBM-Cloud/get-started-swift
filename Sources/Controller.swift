@@ -18,59 +18,40 @@ import Foundation
 import Kitura
 import SwiftyJSON
 import LoggerAPI
+import Configuration
 import CloudFoundryEnv
+import CloudFoundryConfig
 import CouchDB
-
-enum ServerError : Error {
-    case RuntimeError
-    // other types of errors...
-}
 
 public class Controller {
   let router: Router
-  private let appEnv: AppEnv
+  private let configMgr: ConfigurationManager
   private let dbName = "mydb"
   private var dbMgr: DatabaseManager? = nil
 
   var port: Int {
-    get { return appEnv.port }
+    get { return configMgr.port }
   }
 
   init() throws {
-    // Get environment variables from config.json or VCAP_SERVICES
+    // Get environment variables from config.json or environment variables
     let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized
-    if let configData = try? Data(contentsOf: configFile), let configJson = try JSONSerialization.jsonObject(with: configData, options: []) as? [String : Any] {
-      Log.info("Configuration file found: \(configFile)")
-      appEnv = try CloudFoundryEnv.getAppEnv(options: configJson)
-    } else {
-      Log.info("No configuration file found... using environment variables.")
-      appEnv = try CloudFoundryEnv.getAppEnv()
-    }
+    configMgr = ConfigurationManager()
+    configMgr.load(url: configFile).load(.environmentVariables)
 
     // Get database connection details...
-    let services = appEnv.getServices()
-    let servicePair = services.filter { element in element.value.label == "cloudantNoSQLDB" }.first
-
-    if let cloudantService = servicePair?.value {
-      guard let credentials = cloudantService.credentials,
-        let dbHost = credentials["host"] as? String,
-        let dbUsername = credentials["username"] as? String,
-        let dbPassword = credentials["password"] as? String,
-        let dbPort = credentials["port"] as? Int else {
-          Log.error("Could not get credentials for Cloudant service.")
-          throw ServerError.RuntimeError
-      }
-
+    let cloudantServ: Service? = configMgr.getServices(type: "cloudantNoSQLDB").first
+    if let serv = cloudantServ, let cloudantService = CloudantService(withService: serv) {
       // Set up Connection to database
-      let connectionProperties = ConnectionProperties(host: dbHost,
-        port: Int16(dbPort),
+      let connectionProperties = ConnectionProperties(host: cloudantService.host,
+        port: Int16(cloudantService.port),
         secured: true,
-        username: dbUsername,
-        password: dbPassword)
+        username: cloudantService.username,
+        password: cloudantService.password)
       let couchDBClient = CouchDBClient(connectionProperties: connectionProperties)
       dbMgr = DatabaseManager(dbClient: couchDBClient, dbName: dbName)
     } else {
-      Log.warning("Could not find Cloudant service metadata.")
+      Log.warning("Could not load Cloudant service and credentials metadata.")
     }
 
     // All web apps need a Router instance to define routes
