@@ -27,11 +27,10 @@ enum ServerError : Error {
 }
 
 public class Controller {
-
   let router: Router
-  let appEnv: AppEnv
-  let dbName = "mydb"
-  var database: Database?
+  private let appEnv: AppEnv
+  private let dbName = "mydb"
+  private var dbMgr: DatabaseManager? = nil
 
   var port: Int {
     get { return appEnv.port }
@@ -49,7 +48,6 @@ public class Controller {
     }
 
     // Get database connection details...
-    
     let services = appEnv.getServices()
     let servicePair = services.filter { element in element.value.label == "cloudantNoSQLDB" }.first
 
@@ -69,27 +67,68 @@ public class Controller {
         secured: true,
         username: dbUsername,
         password: dbPassword)
-
       let couchDBClient = CouchDBClient(connectionProperties: connectionProperties)
-      database = couchDBClient.database(dbName)
-      couchDBClient.createDB(dbName, callback: {
-           db, error in
-           if (db != nil) {
-               print("Created db")
-           }
-       })
-
+      dbMgr = DatabaseManager(dbClient: couchDBClient, dbName: dbName)
     } else {
-      database = nil
-      Log.warning("Could not find Cloudant service.")
+      Log.warning("Could not find Cloudant service metadata.")
     }
 
-   // All web apps need a Router instance to define routes
-   router = Router()
+    // All web apps need a Router instance to define routes
+    router = Router()
+    router.all("/api/visitors", middleware: BodyParser())
+    router.post("/api/visitors", handler: addVisitors)
+    router.get("/api/visitors", handler: getVisitors)
+    router.all("/", middleware: StaticFileServer())
+  }
 
-   router.all("/api/visitors", middleware: BodyParser())
+  /**
+  * Gets all Visitors.
+  * REST API example:
+  * <code>
+  * GET http://localhost:8080/api/visitors
+  * </code>
+  *
+  * Response:
+  * <code>
+  * [ "Bob", "Jane" ]
+  * </code>
+  * @return An array of all the Visitors
+  */
+  public func getVisitors(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws {
+    // If no database, return empty array.
+    guard let dbMgr = self.dbMgr else {
+      Log.warning(">> No database manager.")
+      response.status(.OK).send(json: JSON([]))
+      next()
+      return
+    }
 
- /**
+    dbMgr.getDatabase() { (db: Database?, error: NSError?) in
+      guard let db = db else {
+        Log.error(">> No database.")
+        response.status(.internalServerError)
+        next()
+        return
+      }
+
+      db.retrieveAll(includeDocuments: true) { docs, error in
+        guard let docs = docs else {
+          Log.error(">> Could not read from database or none exists.")
+          response.status(.badRequest).send("Error could not read from database or none exists")
+          return
+        }
+
+        Log.info(">> Successfully retrived all docs from db.")
+        let names = docs["rows"].map { _, row in
+          return row["doc"]["name"].string ?? ""
+        }
+        response.status(.OK).send(json: JSON(names))
+        next()
+      }
+    }
+  }
+
+  /**
   * Creates a new Visitor.
   *
   * REST API example:
@@ -103,76 +142,40 @@ public class Controller {
   * }
   * </code>
   */
-   router.post("/api/visitors") { request, response, next in
-     guard let parsedBody = request.body else {
-       next()
-       return
-     }
+  public func addVisitors(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws {
+    guard let jsonPayload = request.body?.asJSON else {
+      try response.status(.badRequest).send("JSON payload not provided!").end()
+      return
+    }
 
-     switch(parsedBody) {
-       case .json(let jsonBody):
-         let name = jsonBody["name"].string ?? ""
-         let json: [String: Any] = [ "name": name ]
+    let name = jsonPayload["name"].string ?? ""
+    //let json: [String: Any] = [ "name": name ]
 
-         if(self.database == nil) {
-            Log.error(">> No database")
-            response.status(.OK).send("Hello \(name)!")
-            break;
-         }
-         self.database?.create(JSON(json), callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
-           if let _ = error {
-             Log.error(">> Could not persist document to database.")
-             response.status(.OK).send("Hello \(name)!")
-           } else {
-             Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
-             response.status(.OK).send("Hello \(name)! I added you to the database")
-           }
-         })
+    guard let dbMgr = self.dbMgr else {
+      Log.warning(">> No database manager.")
+      response.status(.OK).send("Hello \(name)!")
+      next()
+      return
+    }
 
-       default:
-         break
-     }
-     next()
-   }
-
- /**
-  * Gets all Visitors.
-  * REST API example:
-  * <code>
-  * GET http://localhost:8080/api/visitors
-  * </code>
-  *
-  * Response:
-  * <code>
-  * [ "Bob", "Jane" ]
-  * </code>
-  * @return An array of all the Visitors
-  */
-   router.get("/api/visitors") { _, response, next in
-     //If no database, return empty array.
-     guard let _ = self.database else {
-        Log.error(">> No database")
-        response.status(.OK).send(json: JSON([]))
+    dbMgr.getDatabase() { (db: Database?, error: NSError?) in
+      guard let db = db else {
+        Log.error(">> No database.")
+        response.status(.internalServerError)
         next()
         return
-     }
-     self.database?.retrieveAll(includeDocuments: true) { docs, error in
-       guard let docs = docs else {
-         Log.error(">> Could not read from database or none exists.")
-         response.status(.badRequest).send("Error could not read from database or none exists")
-         return
-       }
-       Log.info(">> Successfully retrived all docs from Database")
+      }
 
-       let names = docs["rows"].map { _, row in
-         return row["doc"]["name"].string ?? ""
-       }
-       response.status(.OK).send(json: JSON(names))
-       next()
-     }
-   }
-
-   router.all("/", middleware: StaticFileServer())
- }
-
+      db.create(JSON(jsonPayload), callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
+        if let _ = error {
+          Log.error(">> Could not persist document to database.")
+          response.status(.OK).send("Hello \(name)!")
+        } else {
+          Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
+          response.status(.OK).send("Hello \(name)! I added you to the database.")
+        }
+        next()
+      })
+    }
+  }
 }

@@ -25,7 +25,7 @@ class DatabaseManager {
   private let semaphore = DispatchSemaphore(value: 1)
   private let dbName: String
 
-  init(dbClient: CouchDBClient, dbName: String) throws {
+  init(dbClient: CouchDBClient, dbName: String) {
     self.dbClient = dbClient
     self.dbName = dbName
   }
