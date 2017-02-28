@@ -38,6 +38,7 @@ class DatabaseManager {
           username: cloudantService.username,
           password: cloudantService.password)
         self.dbClient = CouchDBClient(connectionProperties: connectionProperties)
+        Log.info("Found and loaded credentials for Cloudant database.")
     } else {
       Log.warning("Could not load Cloudant service metadata.")
       return nil
@@ -56,11 +57,13 @@ class DatabaseManager {
      //dbClient.dbExists(dbName) { [weak self] (exists: Bool, error: NSError?) in
      dbClient.dbExists(dbName) { (exists: Bool, error: NSError?) in
        if exists {
+         Log.info("Database '\(self.dbName)' found.")
          self.db = self.dbClient.database(self.dbName)
          self.semaphore.signal()
          callback(self.db, error)
        } else {
          self.dbClient.createDB(self.dbName) { (db: Database?, error: NSError?) in
+           Log.info("Database '\(self.dbName)' created.")
            self.db = db
            self.semaphore.signal()
            callback(self.db, error)
