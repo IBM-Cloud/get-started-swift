@@ -18,78 +18,87 @@ import Foundation
 import Kitura
 import SwiftyJSON
 import LoggerAPI
+import Configuration
 import CloudFoundryEnv
+import CloudFoundryConfig
 import CouchDB
 
-enum ServerError : Error {
-    case RuntimeError
-    // other types of errors...
-}
-
 public class Controller {
-
   let router: Router
-  let appEnv: AppEnv
-  let dbName = "mydb"
-  var database: Database?
+  private let configMgr: ConfigurationManager
+  private let dbName = "mydb"
+  private let dbMgr: DatabaseManager?
 
   var port: Int {
-    get { return appEnv.port }
+    get { return configMgr.port }
   }
 
   init() throws {
-    // Get environment variables from config.json or VCAP_SERVICES
+    // Get environment variables from config.json or environment variables
     let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized
-    if let configData = try? Data(contentsOf: configFile), let configJson = try JSONSerialization.jsonObject(with: configData, options: []) as? [String : Any] {
-      Log.info("Configuration file found: \(configFile)")
-      appEnv = try CloudFoundryEnv.getAppEnv(options: configJson)
-    } else {
-      Log.info("No configuration file found... using environment variables.")
-      appEnv = try CloudFoundryEnv.getAppEnv()
-    }
+    configMgr = ConfigurationManager()
+    configMgr.load(url: configFile).load(.environmentVariables)
 
     // Get database connection details...
-    
-    let services = appEnv.getServices()
-    let servicePair = services.filter { element in element.value.label == "cloudantNoSQLDB" }.first
+    let cloudantServ: Service? = configMgr.getServices(type: "cloudantNoSQLDB").first
+    dbMgr = DatabaseManager(dbName: dbName, cloudantServ: cloudantServ)
 
-    if let cloudantService = servicePair?.value {
-      guard let credentials = cloudantService.credentials,
-        let dbHost = credentials["host"] as? String,
-        let dbUsername = credentials["username"] as? String,
-        let dbPassword = credentials["password"] as? String,
-        let dbPort = credentials["port"] as? Int else {
-          Log.error("Could not get credentials for Cloudant service.")
-          throw ServerError.RuntimeError
-      }
+    // All web apps need a Router instance to define routes
+    router = Router()
+    router.all("/api/visitors", middleware: BodyParser())
+    router.post("/api/visitors", handler: addVisitors)
+    router.get("/api/visitors", handler: getVisitors)
+    router.all("/", middleware: StaticFileServer())
+  }
 
-      // Set up Connection to database
-      let connectionProperties = ConnectionProperties(host: dbHost,
-        port: Int16(dbPort),
-        secured: true,
-        username: dbUsername,
-        password: dbPassword)
-
-      let couchDBClient = CouchDBClient(connectionProperties: connectionProperties)
-      database = couchDBClient.database(dbName)
-      couchDBClient.createDB(dbName, callback: {
-           db, error in
-           if (db != nil) {
-               print("Created db")
-           }
-       })
-
-    } else {
-      database = nil
-      Log.warning("Could not find Cloudant service.")
+  /**
+  * Gets all Visitors.
+  * REST API example:
+  * <code>
+  * GET http://localhost:8080/api/visitors
+  * </code>
+  *
+  * Response:
+  * <code>
+  * [ "Bob", "Jane" ]
+  * </code>
+  * @return An array of all the Visitors
+  */
+  public func getVisitors(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws {
+    // If no database, return empty array.
+    guard let dbMgr = self.dbMgr else {
+      Log.warning(">> No database manager.")
+      response.status(.OK).send(json: JSON([]))
+      next()
+      return
     }
 
-   // All web apps need a Router instance to define routes
-   router = Router()
+    dbMgr.getDatabase() { (db: Database?, error: NSError?) in
+      guard let db = db else {
+        Log.error(">> No database.")
+        response.status(.internalServerError)
+        next()
+        return
+      }
 
-   router.all("/api/visitors", middleware: BodyParser())
+      db.retrieveAll(includeDocuments: true) { docs, error in
+        guard let docs = docs else {
+          Log.error(">> Could not read from database or none exists.")
+          response.status(.badRequest).send("Error could not read from database or none exists")
+          return
+        }
 
- /**
+        Log.info(">> Successfully retrived all docs from db.")
+        let names = docs["rows"].map { _, row in
+          return row["doc"]["name"].string ?? ""
+        }
+        response.status(.OK).send(json: JSON(names))
+        next()
+      }
+    }
+  }
+
+  /**
   * Creates a new Visitor.
   *
   * REST API example:
@@ -103,76 +112,41 @@ public class Controller {
   * }
   * </code>
   */
-   router.post("/api/visitors") { request, response, next in
-     guard let parsedBody = request.body else {
-       next()
-       return
-     }
+  public func addVisitors(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws {
+    guard let jsonPayload = request.body?.asJSON else {
+      try response.status(.badRequest).send("JSON payload not provided!").end()
+      return
+    }
 
-     switch(parsedBody) {
-       case .json(let jsonBody):
-         let name = jsonBody["name"].string ?? ""
-         let json: [String: Any] = [ "name": name ]
+    let name = jsonPayload["name"].string ?? ""
+    //let json: [String: Any] = [ "name": name ]
 
-         if(self.database == nil) {
-            Log.error(">> No database")
-            response.status(.OK).send("Hello \(name)!")
-            break;
-         }
-         self.database?.create(JSON(json), callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
-           if let _ = error {
-             Log.error(">> Could not persist document to database.")
-             response.status(.OK).send("Hello \(name)!")
-           } else {
-             Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
-             response.status(.OK).send("Hello \(name)! I added you to the database")
-           }
-         })
+    guard let dbMgr = self.dbMgr else {
+      Log.warning(">> No database manager.")
+      response.status(.OK).send("Hello \(name)!")
+      next()
+      return
+    }
 
-       default:
-         break
-     }
-     next()
-   }
-
- /**
-  * Gets all Visitors.
-  * REST API example:
-  * <code>
-  * GET http://localhost:8080/api/visitors
-  * </code>
-  *
-  * Response:
-  * <code>
-  * [ "Bob", "Jane" ]
-  * </code>
-  * @return An array of all the Visitors
-  */
-   router.get("/api/visitors") { _, response, next in
-     //If no database, return empty array.
-     guard let _ = self.database else {
-        Log.error(">> No database")
-        response.status(.OK).send(json: JSON([]))
+    dbMgr.getDatabase() { (db: Database?, error: NSError?) in
+      guard let db = db else {
+        Log.error(">> No database.")
+        response.status(.internalServerError)
         next()
         return
-     }
-     self.database?.retrieveAll(includeDocuments: true) { docs, error in
-       guard let docs = docs else {
-         Log.error(">> Could not read from database or none exists.")
-         response.status(.badRequest).send("Error could not read from database or none exists")
-         return
-       }
-       Log.info(">> Successfully retrived all docs from Database")
+      }
 
-       let names = docs["rows"].map { _, row in
-         return row["doc"]["name"].string ?? ""
-       }
-       response.status(.OK).send(json: JSON(names))
-       next()
-     }
-   }
-
-   router.all("/", middleware: StaticFileServer())
- }
-
+      db.create(jsonPayload, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
+        if let _ = error {
+          Log.error(">> Could not persist document to database.")
+          Log.error(">> Error: \(error)")
+          response.status(.OK).send("Hello \(name)!")
+        } else {
+          Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
+          response.status(.OK).send("Hello \(name)! I added you to the database.")
+        }
+        next()
+      })
+    }
+  }
 }
