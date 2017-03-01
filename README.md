@@ -1,3 +1,7 @@
+[![Build Status - Master](https://travis-ci.org/IBM-Bluemix/get-started-swift.svg?branch=master)](https://travis-ci.org/IBM-Bluemix/get-started-swift)
+![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
+![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
+
 # Getting started with Swift on Bluemix
 To get started, we'll take you through a sample *Swift hello world* application that takes only few minutes to deploy.
 
