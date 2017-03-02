@@ -1,6 +1,6 @@
 import XCTest
-@testable import test_swiftTests
+@testable import getStartedTests
 
 XCTMain([
-     testCase(test_swiftTests.allTests),
+     testCase(Tests1.allTests),
 ])
