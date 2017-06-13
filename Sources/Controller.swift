@@ -113,12 +113,13 @@ public class Controller {
   * </code>
   */
   public func addVisitors(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws {
-    guard let jsonPayload = request.body?.asJSON else {
+    guard var jsonPayload = request.body?.asJSON else {
       try response.status(.badRequest).send("JSON payload not provided!").end()
       return
     }
 
-    let name = jsonPayload["name"].string ?? ""
+    let name = sanitizeInput(str: jsonPayload["name"].string ?? "")
+    jsonPayload["name"] = JSON(name)
     //let json: [String: Any] = [ "name": name ]
 
     guard let dbMgr = self.dbMgr else {
@@ -148,5 +149,15 @@ public class Controller {
         next()
       })
     }
+  }
+
+  private func sanitizeInput(str: String) -> String {
+    let regex1 = try! NSRegularExpression(pattern: "&(?!amp;|lt;|gt;)", options: [])
+    let regex2 = try! NSRegularExpression(pattern: "<", options: [])
+    let regex3 = try! NSRegularExpression(pattern: ">", options: [])
+    var result = regex1.stringByReplacingMatches(in: str, options: [], range: NSMakeRange(0, str.characters.count), withTemplate: "&amp;")
+    result = regex2.stringByReplacingMatches(in: result, options: [], range: NSMakeRange(0, result.characters.count), withTemplate: "&lt;")
+    result = regex3.stringByReplacingMatches(in: result, options: [], range: NSMakeRange(0, result.characters.count), withTemplate: "&gt;")
+    return result
   }
 }
