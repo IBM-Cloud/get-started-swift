@@ -90,7 +90,7 @@ public class Controller {
 
         Log.info(">> Successfully retrived all docs from db.")
         let names = docs["rows"].map { _, row in
-          return row["doc"]["name"].string ?? ""
+          return self.sanitizeInput(str: row["doc"]["name"].string ?? "")
         }
         response.status(.OK).send(json: JSON(names))
         next()
@@ -119,7 +119,6 @@ public class Controller {
     }
 
     let name = sanitizeInput(str: jsonPayload["name"].string ?? "")
-    jsonPayload["name"] = JSON(name)
     //let json: [String: Any] = [ "name": name ]
 
     guard let dbMgr = self.dbMgr else {
@@ -151,11 +150,15 @@ public class Controller {
     }
   }
 
-  private func sanitizeInput(str: String) -> String {
+  private func sanitizeInput(str: String?) -> String {
+    if str == nil {
+      return ""
+    }
+
     let regex1 = try! NSRegularExpression(pattern: "&(?!amp;|lt;|gt;)", options: [])
     let regex2 = try! NSRegularExpression(pattern: "<", options: [])
     let regex3 = try! NSRegularExpression(pattern: ">", options: [])
-    var result = regex1.stringByReplacingMatches(in: str, options: [], range: NSMakeRange(0, str.characters.count), withTemplate: "&amp;")
+    var result = regex1.stringByReplacingMatches(in: str!, options: [], range: NSMakeRange(0, str!.characters.count), withTemplate: "&amp;")
     result = regex2.stringByReplacingMatches(in: result, options: [], range: NSMakeRange(0, result.characters.count), withTemplate: "&lt;")
     result = regex3.stringByReplacingMatches(in: result, options: [], range: NSMakeRange(0, result.characters.count), withTemplate: "&gt;")
     return result
