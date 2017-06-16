@@ -90,7 +90,7 @@ public class Controller {
 
         Log.info(">> Successfully retrived all docs from db.")
         let names = docs["rows"].map { _, row in
-          return self.sanitizeInput(str: row["doc"]["name"].string ?? "")
+          return row["doc"]["name"].string ?? ""
         }
         response.status(.OK).send(json: JSON(names))
         next()
@@ -113,13 +113,12 @@ public class Controller {
   * </code>
   */
   public func addVisitors(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws {
-    guard var jsonPayload = request.body?.asJSON else {
+    guard let jsonPayload = request.body?.asJSON else {
       try response.status(.badRequest).send("JSON payload not provided!").end()
       return
     }
 
-    let name = sanitizeInput(str: jsonPayload["name"].string ?? "")
-    //let json: [String: Any] = [ "name": name ]
+    let name = jsonPayload["name"].string ?? ""
 
     guard let dbMgr = self.dbMgr else {
       Log.warning(">> No database manager.")
@@ -148,19 +147,5 @@ public class Controller {
         next()
       })
     }
-  }
-
-  private func sanitizeInput(str: String?) -> String {
-    if str == nil {
-      return ""
-    }
-
-    let regex1 = try! NSRegularExpression(pattern: "&(?!amp;|lt;|gt;)", options: [])
-    let regex2 = try! NSRegularExpression(pattern: "<", options: [])
-    let regex3 = try! NSRegularExpression(pattern: ">", options: [])
-    var result = regex1.stringByReplacingMatches(in: str!, options: [], range: NSMakeRange(0, str!.characters.count), withTemplate: "&amp;")
-    result = regex2.stringByReplacingMatches(in: result, options: [], range: NSMakeRange(0, result.characters.count), withTemplate: "&lt;")
-    result = regex3.stringByReplacingMatches(in: result, options: [], range: NSMakeRange(0, result.characters.count), withTemplate: "&gt;")
-    return result
   }
 }
