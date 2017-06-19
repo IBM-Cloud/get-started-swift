@@ -119,7 +119,6 @@ public class Controller {
     }
 
     let name = jsonPayload["name"].string ?? ""
-    //let json: [String: Any] = [ "name": name ]
 
     guard let dbMgr = self.dbMgr else {
       Log.warning(">> No database manager.")
