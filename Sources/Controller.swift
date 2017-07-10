@@ -19,29 +19,24 @@ import Kitura
 import SwiftyJSON
 import LoggerAPI
 import Configuration
-import CloudFoundryEnv
-import CloudFoundryConfig
+import CloudEnvironment
 import CouchDB
 
 public class Controller {
   let router: Router
-  private let configMgr: ConfigurationManager
   private let dbName = "mydb"
   private let dbMgr: DatabaseManager?
+  private let cloudEnv: CloudEnv
 
   var port: Int {
-    get { return configMgr.port }
+    get { return cloudEnv.port }
   }
 
   init() throws {
-    // Get environment variables from config.json or environment variables
-    let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized
-    configMgr = ConfigurationManager()
-    configMgr.load(url: configFile).load(.environmentVariables)
-
-    // Get database connection details...
-    let cloudantServ: Service? = configMgr.getServices(type: "cloudantNoSQLDB").first
-    dbMgr = DatabaseManager(dbName: dbName, cloudantServ: cloudantServ)
+    // Get credentials for cloudant db
+    cloudEnv = CloudEnv()
+    let cloudantCredentials = cloudEnv.getCloudantCredentials(name: "MyCloudantDB")
+    dbMgr = DatabaseManager(dbName: dbName, credentials: cloudantCredentials)
 
     // All web apps need a Router instance to define routes
     router = Router()

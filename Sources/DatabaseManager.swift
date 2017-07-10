@@ -14,8 +14,7 @@
 * limitations under the License.
 */
 
-import CloudFoundryEnv
-import CloudFoundryConfig
+import CloudEnvironment
 import CouchDB
 import LoggerAPI
 import Dispatch
@@ -28,19 +27,19 @@ class DatabaseManager {
   private let semaphore = DispatchSemaphore(value: 1)
   private let dbName: String
 
-  init?(dbName: String, cloudantServ: Service?) {
+  init?(dbName: String, credentials: CloudantCredentials?) {
     self.dbName = dbName
     // Get database connection details...
-    if let cloudantServ = cloudantServ, let cloudantService = CloudantService(withService: cloudantServ) {
-        let connectionProperties = ConnectionProperties(host: cloudantService.host,
-          port: Int16(cloudantService.port),
+    if let credentials = credentials {
+        let connectionProperties = ConnectionProperties(host: credentials.host,
+          port: Int16(credentials.port),
           secured: true,
-          username: cloudantService.username,
-          password: cloudantService.password)
+          username: credentials.username,
+          password: credentials.password)
         self.dbClient = CouchDBClient(connectionProperties: connectionProperties)
         Log.info("Found and loaded credentials for Cloudant database.")
     } else {
-      Log.warning("Could not load Cloudant service metadata.")
+      Log.warning("Could not load credentials for Cloudant db.")
       return nil
     }
   }
