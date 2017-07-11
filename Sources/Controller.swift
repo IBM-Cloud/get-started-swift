@@ -18,11 +18,10 @@ import Foundation
 import Kitura
 import SwiftyJSON
 import LoggerAPI
-import Configuration
 import CloudEnvironment
 import CouchDB
 
-public class Controller {
+class Controller {
   let router: Router
   private let dbName = "mydb"
   private let dbMgr: DatabaseManager?
@@ -32,7 +31,7 @@ public class Controller {
     get { return cloudEnv.port }
   }
 
-  init() throws {
+  init() {
     // Get credentials for cloudant db
     cloudEnv = CloudEnv()
     let cloudantCredentials = cloudEnv.getCloudantCredentials(name: "MyCloudantDB")

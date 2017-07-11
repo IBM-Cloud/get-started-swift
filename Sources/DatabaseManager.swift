@@ -31,13 +31,13 @@ class DatabaseManager {
     self.dbName = dbName
     // Get database connection details...
     if let credentials = credentials {
-        let connectionProperties = ConnectionProperties(host: credentials.host,
-          port: Int16(credentials.port),
-          secured: true,
-          username: credentials.username,
-          password: credentials.password)
-        self.dbClient = CouchDBClient(connectionProperties: connectionProperties)
-        Log.info("Found and loaded credentials for Cloudant database.")
+      let connectionProperties = ConnectionProperties(host: credentials.host,
+        port: Int16(credentials.port),
+        secured: true,
+        username: credentials.username,
+      password: credentials.password)
+      self.dbClient = CouchDBClient(connectionProperties: connectionProperties)
+      Log.info("Found and loaded credentials for Cloudant database.")
     } else {
       Log.warning("Could not load credentials for Cloudant db.")
       return nil
@@ -45,29 +45,34 @@ class DatabaseManager {
   }
 
   public func getDatabase(callback: @escaping (Database?, NSError?) -> ()) -> Void {
-     semaphore.wait()
+    semaphore.wait()
 
-     if let database = db {
-       semaphore.signal()
-       callback(database, nil)
-       return
-     }
+    if let database = db {
+      semaphore.signal()
+      callback(database, nil)
+      return
+    }
 
-     //dbClient.dbExists(dbName) { [weak self] (exists: Bool, error: NSError?) in
-     dbClient.dbExists(dbName) { (exists: Bool, error: NSError?) in
-       if exists {
-         Log.info("Database '\(self.dbName)' found.")
-         self.db = self.dbClient.database(self.dbName)
-         self.semaphore.signal()
-         callback(self.db, error)
-       } else {
-         self.dbClient.createDB(self.dbName) { (db: Database?, error: NSError?) in
-           Log.info("Database '\(self.dbName)' created.")
-           self.db = db
-           self.semaphore.signal()
-           callback(self.db, error)
-         }
-       }
-     }
+    //dbClient.dbExists(dbName) { [weak self] (exists: Bool, error: NSError?) in
+    dbClient.dbExists(dbName) { (exists: Bool, error: NSError?) in
+      if exists {
+        Log.info("Database '\(self.dbName)' found.")
+        self.db = self.dbClient.database(self.dbName)
+        self.semaphore.signal()
+        callback(self.db, error)
+      } else {
+        self.dbClient.createDB(self.dbName) { (db: Database?, error: NSError?) in
+          if let _ = db, error == nil {
+            self.db = db
+            Log.info("Database '\(self.dbName)' created.")
+          } else {
+            Log.error("Something went wrong... database '\(self.dbName)' was not created.")
+          }
+          self.semaphore.signal()
+          callback(self.db, error)
+        }
+      }
+    }
   }
+  
 }
