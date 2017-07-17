@@ -88,7 +88,7 @@ Login to your {{site.data.keyword.Bluemix_notm}} account:
 $ bx login
 ```
 
-From within the *get-started-swift* directory push your app to {{site.data.keyword.Bluemix_notm}}
+From within the *get-started-swift* directory push your app to {{site.data.keyword.Bluemix_notm}}:
 
 ```
 $ bx app push
@@ -126,7 +126,7 @@ We're now going to update your local code to point to this database. Create a JS
  }
  ```
 
-Update the `mappings.json` file in the `config` directory by replacing the `<cloudant instance name>` placeholder with the name that was assigned to your Cloudant instance:
+Update the `mappings.json` file in the `config` directory by replacing the `<cloudant instance name>` placeholder with the **name** that was assigned to your Cloudant instance:
 
 ```
 {
