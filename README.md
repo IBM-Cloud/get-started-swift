@@ -5,7 +5,7 @@
 # Getting started with Swift on Bluemix
 To get started, we'll take you through a sample *Swift hello world* application that takes only few minutes to deploy.
 
-You'll need a [Bluemix account](https://console.ng.bluemix.net/registration/) and the following tools listed below in the [Prerequisites](#applimits) section. If you do not have the tools, you can follow the links to download them.
+You'll need a [Bluemix account](https://console.ng.bluemix.net/registration/) and the following tools listed below in the [Prerequisites](#prerequisites) section. If you do not have the tools, you can follow the links to download them.
 
 ## Prerequisites
 
@@ -82,7 +82,7 @@ Replace the *API-endpoint* in the command with an API endpoint from the followin
 | https://api.eu-gb.bluemix.net  | United Kingdom |
 | https://api.au-syd.bluemix.net | Sydney         |
 
-Login to your {{site.data.keyword.Bluemix_notm}} account
+Login to your {{site.data.keyword.Bluemix_notm}} account:
 
 ```
 $ bx login
@@ -140,9 +140,9 @@ Update the `mappings.json` file in the `config` directory by replacing the `<clo
 }
 ```
 
-This sample application uses the `CloudEnvironment` package to interact with Bluemix to parse environment variables. [Learn more...](https://packagecatalog.com/package/IBM-Swift/CloudEnvironment)
+This sample application uses the `CloudEnvironment` package to interact with Bluemix to parse environment variables to obtain the necessary service credentials. [Learn more...](https://packagecatalog.com/package/IBM-Swift/CloudEnvironment)
 
-2. Back in the {{site.data.keyword.Bluemix_notm}} UI, select your App -> Connections -> Cloudant -> View Credentials
+2. Back in the {{site.data.keyword.Bluemix_notm}} UI, select your App -> Connections -> Cloudant -> View Credentials.
 
 3. Copy and paste just the credential values to the corresponding fields in your `my-cloudant-credentials.json` file.
 
