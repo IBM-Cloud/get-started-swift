@@ -130,13 +130,16 @@ class Controller {
       }
 
       db.create(jsonPayload, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
-        if let _ = error {
+        if let error = error {
           Log.error(">> Could not persist document to database.")
           Log.error(">> Error: \(error)")
           response.status(.OK).send("Hello \(name)!")
-        } else {
+        } else if let document = document {
           Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
           response.status(.OK).send("Hello \(name)! I added you to the database.")
+        } else {
+          Log.error(">> Could not persist document to database.")
+          response.status(.OK).send("Hello \(name)!")
         }
         next()
       })

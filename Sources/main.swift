@@ -21,7 +21,7 @@ import Kitura
 // Init logger
 HeliumLogger.use(LoggerMessageType.info)
 // Create controller instance
-let controller = try Controller()
+let controller = Controller()
 // Start Kitura server
 Kitura.addHTTPServer(onPort: controller.port, with: controller.router)
 Kitura.run()
