@@ -1,5 +1,4 @@
 .build/*
-Packages/*
-kitura-helloworld.xcodeproj/*
+*.xcodeproj/*
 *.DS_Store
-Sources/config.json
+config/my-cloudant-credentials.json

@@ -18,30 +18,24 @@ import Foundation
 import Kitura
 import SwiftyJSON
 import LoggerAPI
-import Configuration
-import CloudFoundryEnv
-import CloudFoundryConfig
+import CloudEnvironment
 import CouchDB
 
-public class Controller {
+class Controller {
   let router: Router
-  private let configMgr: ConfigurationManager
   private let dbName = "mydb"
   private let dbMgr: DatabaseManager?
+  private let cloudEnv: CloudEnv
 
   var port: Int {
-    get { return configMgr.port }
+    get { return cloudEnv.port }
   }
 
-  init() throws {
-    // Get environment variables from config.json or environment variables
-    let configFile = URL(fileURLWithPath: #file).appendingPathComponent("../config.json").standardized
-    configMgr = ConfigurationManager()
-    configMgr.load(url: configFile).load(.environmentVariables)
-
-    // Get database connection details...
-    let cloudantServ: Service? = configMgr.getServices(type: "cloudantNoSQLDB").first
-    dbMgr = DatabaseManager(dbName: dbName, cloudantServ: cloudantServ)
+  init() {
+    // Get credentials for cloudant db
+    cloudEnv = CloudEnv()
+    let cloudantCredentials = cloudEnv.getCloudantCredentials(name: "MyCloudantDB")
+    dbMgr = DatabaseManager(dbName: dbName, credentials: cloudantCredentials)
 
     // All web apps need a Router instance to define routes
     router = Router()
@@ -136,13 +130,16 @@ public class Controller {
       }
 
       db.create(jsonPayload, callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
-        if let _ = error {
+        if let error = error {
           Log.error(">> Could not persist document to database.")
           Log.error(">> Error: \(error)")
           response.status(.OK).send("Hello \(name)!")
-        } else {
+        } else if let document = document {
           Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
           response.status(.OK).send("Hello \(name)! I added you to the database.")
+        } else {
+          Log.error(">> Could not persist document to database.")
+          response.status(.OK).send("Hello \(name)!")
         }
         next()
       })
