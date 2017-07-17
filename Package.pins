@@ -8,12 +8,6 @@
       "version": "0.4.0"
     },
     {
-      "package": "CEpoll",
-      "reason": null,
-      "repositoryURL": "https://github.com/IBM-Swift/CEpoll.git",
-      "version": "0.1.0"
-    },
-    {
       "package": "CloudEnvironment",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/CloudEnvironment.git",
@@ -50,16 +44,16 @@
       "version": "1.7.0"
     },
     {
-      "package": "Kitura-net",
-      "reason": null,
-      "repositoryURL": "https://github.com/IBM-Swift/Kitura-net.git",
-      "version": "1.7.13"
-    },
-    {
       "package": "Kitura-TemplateEngine",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/Kitura-TemplateEngine.git",
       "version": "1.7.1"
+    },
+    {
+      "package": "Kitura-net",
+      "reason": null,
+      "repositoryURL": "https://github.com/IBM-Swift/Kitura-net.git",
+      "version": "1.7.13"
     },
     {
       "package": "LoggerAPI",
@@ -68,28 +62,16 @@
       "version": "1.7.0"
     },
     {
-      "package": "OpenSSL",
+      "package": "SSLService",
       "reason": null,
-      "repositoryURL": "https://github.com/IBM-Swift/OpenSSL.git",
-      "version": "0.3.5"
-    },
-    {
-      "package": "Signals",
-      "reason": null,
-      "repositoryURL": "https://github.com/IBM-Swift/BlueSignals.git",
-      "version": "0.9.48"
+      "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
+      "version": "0.12.45"
     },
     {
       "package": "Socket",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/BlueSocket.git",
       "version": "0.12.56"
-    },
-    {
-      "package": "SSLService",
-      "reason": null,
-      "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
-      "version": "0.12.45"
     },
     {
       "package": "SwiftyJSON",
