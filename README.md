@@ -118,9 +118,7 @@ We're now going to update your local code to point to this database. Create a JS
 
  ```
  {
-   "host": "<host>",
    "password": "<password>",
-   "port": 443,
    "url": "<url>",
    "username": "<username>"
  }
