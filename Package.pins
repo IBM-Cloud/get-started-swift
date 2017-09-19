@@ -11,7 +11,7 @@
       "package": "CloudEnvironment",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/CloudEnvironment.git",
-      "version": "3.0.0"
+      "version": "4.0.4"
     },
     {
       "package": "CloudFoundryEnv",
