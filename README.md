@@ -2,15 +2,15 @@
 ![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
 ![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
 
-# Getting started with Swift on Bluemix
+# Getting started with Swift on IBM Cloud
 To get started, we'll take you through a sample *Swift hello world* application that takes only few minutes to deploy.
 
-You'll need a [Bluemix account](https://console.ng.bluemix.net/registration/) and the following tools listed below in the [Prerequisites](#prerequisites) section. If you do not have the tools, you can follow the links to download them.
+You'll need a [IBM Cloud account](https://console.ng.bluemix.net/registration/) and the following tools listed below in the [Prerequisites](#prerequisites) section. If you do not have the tools, you can follow the links to download them.
 
 ## Prerequisites
 
 * [Git](https://git-scm.com/downloads).
-* [Bluemix CLI](https://console.bluemix.net/docs/cli/reference/bluemix_cli/all_versions.html#bluemix-cli-installer-downloads).
+* [IBM Cloud CLI](https://console.bluemix.net/docs/cli/reference/bluemix_cli/all_versions.html#bluemix-cli-installer-downloads).
 * [Swift compiler](https://swift.org/download/) for your platform.
 
 ## 1. Clone the sample app
@@ -65,7 +65,7 @@ The `manifest.yml` file includes basic information about your app, such as the n
 
 ## 4. Deploy the app
 
-You can use the Bluemix CLI to deploy apps.
+You can use the IBM Cloud CLI to deploy apps.
 
 First, choose your API endpoint:
 
@@ -105,8 +105,8 @@ Next, we'll add a Cloudant NoSQL database to this application and set up the app
 1. Log in to {{site.data.keyword.Bluemix_notm}} in your Browser. Browse to the `Dashboard`. Select your application by clicking on its name in the `Name` column.
 2. Click on `Connections` then `Connect new`.
 3. In the `Data & Analytics` section, select `Cloudant NoSQL DB`. Take note of the **name** assigned to your Cloudant instance.
-4. Select a pricing plan. Bluemix offers free `Lite` plans for a select collection of its cloud services with enough capacity to get you started.
-5. Select `Restage` when prompted. Bluemix will restart your application and provide the database credentials to your application using the `VCAP_SERVICES` environment variable. This environment variable is only available to the application when it is running on Bluemix.
+4. Select a pricing plan. IBM Cloud offers free `Lite` plans for a select collection of its cloud services with enough capacity to get you started.
+5. Select `Restage` when prompted. IBM Cloud will restart your application and provide the database credentials to your application using the `VCAP_SERVICES` environment variable. This environment variable is only available to the application when it is running on IBM Cloud.
 
 Environment variables enable you to separate deployment settings from your source code. For example, instead of hardcoding a database password, you can store this in an environment variable which you reference in your source code.
 
@@ -138,7 +138,7 @@ Update the `mappings.json` file in the `config` directory by replacing the `<clo
 }
 ```
 
-This sample application uses the `CloudEnvironment` package to interact with Bluemix to parse environment variables to obtain the necessary service credentials. [Learn more...](https://packagecatalog.com/package/IBM-Swift/CloudEnvironment)
+This sample application uses the `CloudEnvironment` package to interact with IBM Cloud to parse environment variables to obtain the necessary service credentials. [Learn more...](https://packagecatalog.com/package/IBM-Swift/CloudEnvironment)
 
 2. Back in the {{site.data.keyword.Bluemix_notm}} UI, select your App -> Connections -> Cloudant -> View Credentials.
 
