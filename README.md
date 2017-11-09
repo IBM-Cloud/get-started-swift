@@ -52,7 +52,7 @@ You can then view your app at: http://localhost:8080.
 
 ## 3. Prepare the app for deployment
 
-To deploy to {{site.data.keyword.Bluemix_notm}}, it can be helpful to set up a `manifest.yml` file. One is provided for you with the sample. Take a moment to look at it.
+To deploy to IBM Cloud, it can be helpful to set up a `manifest.yml` file. One is provided for you with the sample. Take a moment to look at it.
 
 The `manifest.yml` file includes basic information about your app, such as the name, how much memory to allocate for each instance, and the route. In this `manifest.yml` **random-route: true** generates a random route for your app to prevent your route from colliding with others. You can replace **random-route: true** with **host: myChosenHostName**, supplying a host name of your choice. [Learn more...](https://console.bluemix.net/docs/manageapps/depapps.html#appmanifest)
 
@@ -82,13 +82,13 @@ Replace the *API-endpoint* in the command with an API endpoint from the followin
 | https://api.eu-gb.bluemix.net  | United Kingdom |
 | https://api.au-syd.bluemix.net | Sydney         |
 
-Login to your {{site.data.keyword.Bluemix_notm}} account:
+Login to your IBM Cloud account:
 
 ```
 $ bx login
 ```
 
-From within the *get-started-swift* directory push your app to {{site.data.keyword.Bluemix_notm}}:
+From within the *get-started-swift* directory push your app to IBM Cloud:
 
 ```
 $ bx app push
@@ -100,9 +100,9 @@ When deployment completes you should see a message indicating that your app is r
 
 ## 5. Add a database
 
-Next, we'll add a Cloudant NoSQL database to this application and set up the application so that it can run locally and on {{site.data.keyword.Bluemix_notm}}.
+Next, we'll add a Cloudant NoSQL database to this application and set up the application so that it can run locally and on IBM Cloud.
 
-1. Log in to {{site.data.keyword.Bluemix_notm}} in your Browser. Browse to the `Dashboard`. Select your application by clicking on its name in the `Name` column.
+1. Log in to IBM Cloud in your Browser. Browse to the `Dashboard`. Select your application by clicking on its name in the `Name` column.
 2. Click on `Connections` then `Connect new`.
 3. In the `Data & Analytics` section, select `Cloudant NoSQL DB`. Take note of the **name** assigned to your Cloudant instance.
 4. Select a pricing plan. IBM Cloud offers free `Lite` plans for a select collection of its cloud services with enough capacity to get you started.
@@ -112,7 +112,7 @@ Environment variables enable you to separate deployment settings from your sourc
 
 ## 6. Use the database
 
-We're now going to update your local code to point to this database. Create a JSON file that will store the credentials for the services the application will use. This file will be used *only* when the application is running locally. When running in {{site.data.keyword.Bluemix_notm}}, the credentials will be read from the VCAP_SERVICES environment variable.
+We're now going to update your local code to point to this database. Create a JSON file that will store the credentials for the services the application will use. This file will be used *only* when the application is running locally. When running in IBM Cloud, the credentials will be read from the VCAP_SERVICES environment variable.
 
 1. Create a file called `my-cloudant-credentials.json` in the `config` directory with the following content (as reference, see `config/my-cloudant-credentials.json.example`):
 
@@ -140,7 +140,7 @@ Update the `mappings.json` file in the `config` directory by replacing the `<clo
 
 This sample application uses the `CloudEnvironment` package to interact with IBM Cloud to parse environment variables to obtain the necessary service credentials. [Learn more...](https://packagecatalog.com/package/IBM-Swift/CloudEnvironment)
 
-2. Back in the {{site.data.keyword.Bluemix_notm}} UI, select your App -> Connections -> Cloudant -> View Credentials.
+2. Back in the IBM Cloud UI, select your App -> Connections -> Cloudant -> View Credentials.
 
 3. Copy and paste just the credential values to the corresponding fields in your `my-cloudant-credentials.json` file.
 
@@ -158,7 +158,7 @@ View your app at: http://localhost:8080. Any names you enter into the app will n
 
 This sample application uses the `Kitura-CouchDB` package to interact with Cloudant. [Learn more...](https://packagecatalog.com/package/IBM-Swift/Kitura-CouchDB)
 
-5. Make any changes you want and re-deploy to {{site.data.keyword.Bluemix_notm}}!
+5. Make any changes you want and re-deploy to IBM Cloud!
 
 ```
 $ bx app push
