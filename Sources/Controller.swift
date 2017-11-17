@@ -36,7 +36,6 @@ class Controller {
     cloudEnv = CloudEnv()
     let cloudantCredentials = cloudEnv.getCloudantCredentials(name: "MyCloudantDB")
     dbMgr = DatabaseManager(dbName: dbName, credentials: cloudantCredentials)
-    // Log.info("dbMgr: \(String(reflecting: dbMgr))")
 
     // All web apps need a Router instance to define routes
     router = Router()
