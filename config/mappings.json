@@ -1,7 +1,6 @@
 {
   "MyCloudantDB": {
     "searchPatterns": [
-      "cloudfoundry:<cloudant instance name>",
       "cloudfoundry:cloudant",
       "env:kube-cloudant-credentials",
       "file:config/my-cloudant-credentials.json"
