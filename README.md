@@ -124,13 +124,13 @@ We're now going to update your local code to point to this database. Create a JS
  }
  ```
 
-Update the `mappings.json` file in the `config` directory by replacing the `<cloudant instance name>` placeholder with the **name** that was assigned to your Cloudant instance:
+Update the `mappings.json` file in the `config` directory by replacing the `clodant` placeholder with the **name** that was assigned to your Cloudant instance:
 
 ```
 {
   "MyCloudantDB": {
     "searchPatterns": [
-      "cloudfoundry:<cloudant instance name>",
+      "cloudfoundry:cloudant",
       "env:kube-cloudant-credentials",
       "file:config/my-cloudant-credentials.json"
     ]
