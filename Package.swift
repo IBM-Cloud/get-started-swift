@@ -20,10 +20,23 @@ import PackageDescription
 
 let package = Package(
     name: "kitura-helloworld",
+    products: [
+      .executable(
+        name: "kitura-helloworld",
+        targets:  ["kitura-helloworld"]
+      )
+    ],
     dependencies: [
     .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMinor(from: "1.7.1")),
-    .package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", .upToNextMajor(from: "5.0.0")),
+    .package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", .upToNextMajor(from: "6.0.0")),
     .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.0.0")),
-    .package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", .upToNextMinor(from: "1.7.2"))
+    .package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", .upToNextMinor(from: "1.7.2")),
+    .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMajor(from: "17.0.0"))
+    ],
+    targets: [
+      .target(
+        name: "kitura-helloworld",
+        dependencies: ["Kitura", "HeliumLogger", "SwiftyJSON", "CloudEnvironment", "CouchDB"]
+      )
     ]
 )
