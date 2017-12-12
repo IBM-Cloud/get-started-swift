@@ -3,25 +3,15 @@
 ![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
 
 # Getting started with Swift on IBM Cloud
-<<<<<<< HEAD
 To get started, we'll take you through a sample *Getting Started* application that takes only few minutes to deploy.
 
 You'll need an [IBM Cloud account](https://console.ng.bluemix.net/registration/) and the following tools listed below in the [Prerequisites](#prerequisites) section. If you do not have the tools, you can follow the links to download them.
-=======
-To get started, we'll take you through a sample *Swift hello world* application that takes only few minutes to deploy.
-
-You'll need a [IBM Cloud account](https://console.ng.bluemix.net/registration/) and the following tools listed below in the [Prerequisites](#prerequisites) section. If you do not have the tools, you can follow the links to download them.
->>>>>>> master
 
 ## Prerequisites
 
 * [Git](https://git-scm.com/downloads).
 * [IBM Cloud CLI](https://console.bluemix.net/docs/cli/reference/bluemix_cli/all_versions.html#bluemix-cli-installer-downloads).
-<<<<<<< HEAD
 * [Swift 4.0 or newer](https://swift.org/download/) for your platform.
-=======
-* [Swift compiler](https://swift.org/download/) for your platform.
->>>>>>> master
 
 ## 1. Clone the sample app
 
@@ -133,13 +123,7 @@ We're now going to update your local code to point to this database. Create a JS
    "username": "<username>"
  }
  ```
-
-<<<<<<< HEAD
 Update the `mappings.json` file in the `config` directory by replacing the `cloudant` placeholder with the **name** that was assigned to your Cloudant instance:
-=======
-Update the `mappings.json` file in the `config` directory by replacing the `clodant` placeholder with the **name** that was assigned to your Cloudant instance:
->>>>>>> master
-
 ```
 {
   "MyCloudantDB": {
@@ -151,7 +135,6 @@ Update the `mappings.json` file in the `config` directory by replacing the `clod
   }
 }
 ```
-
 This sample application uses the `CloudEnvironment` package to interact with IBM Cloud to parse environment variables to obtain the necessary service credentials. [Learn more...](https://packagecatalog.com/package/IBM-Swift/CloudEnvironment)
 
 2. Back in the IBM Cloud UI, select your App -> Connections -> Cloudant -> View Credentials.
