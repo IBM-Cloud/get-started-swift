@@ -17,11 +17,14 @@
 import LoggerAPI
 import HeliumLogger
 import Kitura
+import GetStartedApp
 
 // Init logger
 HeliumLogger.use(LoggerMessageType.info)
+
 // Create controller instance
 let controller = Controller()
+
 // Start Kitura server
 Kitura.addHTTPServer(onPort: controller.port, with: controller.router)
 Kitura.run()

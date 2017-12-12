@@ -1,6 +1,5 @@
 // swift-tools-version:4.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
-
 /**
  * Copyright IBM Corporation 2017
  *
@@ -19,11 +18,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "kitura-helloworld",
+    name: "GetStartedSwift",
     products: [
       .executable(
-        name: "kitura-helloworld",
-        targets:  ["kitura-helloworld"]
+        name: "GetStartedSwift",
+        targets:  ["GetStartedServer"]
       )
     ],
     dependencies: [
@@ -35,8 +34,16 @@ let package = Package(
     ],
     targets: [
       .target(
-        name: "kitura-helloworld",
+        name: "GetStartedServer",
+        dependencies: ["GetStartedApp"]
+      ),
+      .target(
+        name: "GetStartedApp",
         dependencies: ["Kitura", "HeliumLogger", "SwiftyJSON", "CloudEnvironment", "CouchDB"]
+      ),
+      .testTarget(
+        name: "GetStartedTests",
+        dependencies: ["GetStartedServer"]
       )
     ]
 )

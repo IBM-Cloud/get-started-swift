@@ -29,19 +29,20 @@ class DatabaseManager {
 
   init?(dbName: String, credentials: CloudantCredentials?) {
     self.dbName = dbName
+
     // Get database connection details...
-    if let credentials = credentials {
-      let connectionProperties = ConnectionProperties(host: credentials.host,
-        port: Int16(credentials.port),
-        secured: true,
-        username: credentials.username,
-      password: credentials.password)
-      self.dbClient = CouchDBClient(connectionProperties: connectionProperties)
-      Log.info("Found and loaded credentials for Cloudant database.")
-    } else {
+    guard let credentials = credentials else {
       Log.warning("Could not load credentials for Cloudant db.")
       return nil
     }
+
+    let connectionProperties = ConnectionProperties(host: credentials.host,
+      port: Int16(credentials.port),
+      secured: true,
+      username: credentials.username,
+    password: credentials.password)
+    self.dbClient = CouchDBClient(connectionProperties: connectionProperties)
+    Log.info("Found and loaded credentials for Cloudant database.")
   }
 
   public func getDatabase(callback: @escaping (Database?, NSError?) -> ()) -> Void {
@@ -74,5 +75,5 @@ class DatabaseManager {
       }
     }
   }
-  
+
 }
