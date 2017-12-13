@@ -22,7 +22,7 @@ To run locally and deploy from the command line, follow the instructions below. 
 Now that you're ready to start working with the simple Swift app, let's clone the repository and change to the directory to where the sample app is located.
 
 ```
-$ git clone https://github.com/IBM-Bluemix/get-started-swift
+$ git clone https://github.com/IBM-Cloud/get-started-swift
 
 ...
 
