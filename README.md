@@ -153,7 +153,7 @@ $ swift build
 
 ...
 
-$ .build/debug/getting-started
+$ ./.build/x86_64-apple-macosx10.10/debug/get-started-swift
 ```
 
 View your app at: http://localhost:8080. Any names you enter into the app will now get added to the database.
