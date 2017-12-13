@@ -110,7 +110,7 @@ Next, we'll add a Cloudant NoSQL database to this application and set up the app
 2. Click on `Connections` then `Connect new`.
 3. In the `Data & Analytics` section, select `Cloudant NoSQL DB` and name it `cloudant`.
 4. Select a pricing plan. IBM Cloud offers free `Lite` plans for a select collection of its cloud services with enough capacity to get you started.
-5. Once created, navigate to the `Connections` link on the left pane, find `cloudant` and select `Connect` to bind your application to the database.
+5. Once created, navigate to the `Connections` link on the left pane, find `Get-Started-Swift` and select `Connect` to bind your application to the database.
 6. Select `Restage` when prompted. IBM Cloud will restart your application and provide the database credentials to your application using the `VCAP_SERVICES` environment variable. This environment variable is only available to the application when it is running on IBM Cloud.
 
 Environment variables enable you to separate deployment settings from your source code. For example, instead of hardcoding a database password, you can store this in an environment variable which you reference in your source code.
