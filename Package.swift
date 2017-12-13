@@ -1,3 +1,5 @@
+// swift-tools-version:4.0
+// The swift-tools-version declares the minimum version of Swift required to build this package.
 /**
  * Copyright IBM Corporation 2017
  *
@@ -16,11 +18,32 @@
 import PackageDescription
 
 let package = Package(
-    name: "kitura-helloworld",
+    name: "get-started-swift",
+    products: [
+      .executable(
+        name: "get-started-swift",
+        targets:  ["GetStartedServer"]
+      )
+    ],
     dependencies: [
-    .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 1, minor: 7),
-    .Package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", majorVersion: 4),
-    .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 1, minor: 7),
-    .Package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", majorVersion: 1, minor: 7)
+    .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMinor(from: "1.7.1")),
+    .package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", .upToNextMajor(from: "6.0.0")),
+    .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.0.0")),
+    .package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", .upToNextMinor(from: "1.7.2")),
+    .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMajor(from: "17.0.0"))
+    ],
+    targets: [
+      .target(
+        name: "GetStartedServer",
+        dependencies: ["GetStartedApp"]
+      ),
+      .target(
+        name: "GetStartedApp",
+        dependencies: ["Kitura", "HeliumLogger", "SwiftyJSON", "CloudEnvironment", "CouchDB"]
+      ),
+      .testTarget(
+        name: "GetStartedTests",
+        dependencies: ["GetStartedServer"]
+      )
     ]
 )

@@ -41,10 +41,11 @@
         				  method: "POST",
         				  url: "./api/visitors",
         				  contentType: "application/json",
-        				  data: JSON.stringify({name: name })
+                       data: JSON.stringify({name: name})
         				})
               .done(function(data) {
-                  $('#response').html(AntiXSS.sanitizeInput(data));
+                    var json = JSON.parse(AntiXSS.sanitizeInput(data))
+                  $('#response').html(json["response"]);
                   $('#nameInput').hide();
                     getNames();
               });

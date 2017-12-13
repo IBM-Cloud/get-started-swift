@@ -1,7 +1,7 @@
 app:
-  image: ibmcom/swift-ubuntu:3.1.1
+  image: ibmcom/swift-ubuntu:4.0.2
   ports:
     - "8080:8080"
   volumes:
     - .:/GetStartedSwift
-  command: bash -c "cd /GetStartedSwift && swift package clean && swift build && swift test && ./.build/debug/kitura-helloworld"
+  command: bash -c "cd /GetStartedSwift && swift package --build-path .build-ubuntu clean && swift build --build-path .build-ubuntu && swift test --build-path .build-ubuntu && ./.build-ubuntu/debug/kitura-helloworld"

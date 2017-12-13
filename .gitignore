@@ -1,4 +1,5 @@
 .build/*
+.build-ubuntu/*
 *.xcodeproj/*
 *.DS_Store
 config/my-cloudant-credentials.json
