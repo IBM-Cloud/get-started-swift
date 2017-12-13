@@ -1,4 +1,4 @@
-[![Build Status - Master](https://travis-ci.org/IBM-Bluemix/get-started-swift.svg?branch=master)](https://travis-ci.org/IBM-Bluemix/get-started-swift)
+[![Build Status - Master](https://travis-ci.org/IBM-Cloud/get-started-swift.svg?branch=master)](https://travis-ci.org/IBM-Cloud/get-started-swift)
 ![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
 ![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
 
