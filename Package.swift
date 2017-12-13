@@ -18,10 +18,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "GetStartedSwift",
+    name: "get-started-swift",
     products: [
       .executable(
-        name: "GetStartedSwift",
+        name: "get-started-swift",
         targets:  ["GetStartedServer"]
       )
     ],

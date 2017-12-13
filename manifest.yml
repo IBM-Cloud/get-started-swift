@@ -1,7 +1,12 @@
----
+declared-services:
+  Get-Started-Cloudant:
+    label: cloudantNoSQLDB
+    plan: Lite
 applications:
- - name: GetStartedSwift
+ - name: Get-Started-Swift
    random-route: true
    memory: 256M
-   command: GetStartedSwift
+   command: get-started-swift
    buildpack: swift_buildpack
+   services:
+   - Get-Started-Cloudant
