@@ -5,7 +5,7 @@
 # Getting started with Swift on IBM Cloud
 To get started, we'll take you through a sample *Getting Started* application that takes only few minutes to deploy.
 
-In order to deploy to IBM Cloud, you'll need an [IBM Cloud account](https://console.ng.bluemix.net/registration/). Once registered, you can automatically deploy the app with toolchain integration using our deploy to IBM Cloud button then skip [here](#5-add-a-database) to set up your cloudant database
+In order to deploy the application to IBM Cloud, you'll need an [IBM Cloud account](https://console.ng.bluemix.net/registration/). Once registered, you can quickly get your app setup remotely using our deploy to IBM Cloud button. Then, simply follow the instructions [here](#5.-Add-a-database) to set up and connect your cloudant database.
 
 [![Deploy to IBM Cloud](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/IBM-Cloud/get-started-swift&branch=master)
 
