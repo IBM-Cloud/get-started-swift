@@ -67,24 +67,24 @@ public class Controller {
     // If no database, return empty array.
     guard let dbMgr = self.dbMgr else {
       Log.warning(">> No database manager.")
-      respondWith(nil, .internalServerError)
+      respondWith([], nil)
       return
     }
-    
+
     dbMgr.getDatabase() { (db: Database?, error: NSError?) in
       guard let db = db else {
         Log.error(">> No database.")
         respondWith(nil, .internalServerError)
         return
       }
-      
+
       db.retrieveAll(includeDocuments: true) { docs, error in
         guard let docs = docs else {
           Log.error(">> Could not read from database or none exists.")
           respondWith(nil, .internalServerError)
           return
         }
-        
+
         Log.info(">> Successfully retrived all docs from db.")
         let names = docs["rows"].map { _, row in
           return row["doc"]["name"].string ?? ""
@@ -112,7 +112,7 @@ public class Controller {
   public func addVisitors(user: [String: String], respondWith: @escaping ([String: String]?, RequestError?) -> Void) {
     guard let name = user["name"], let dbMgr = self.dbMgr else {
       Log.warning(">> No database manager.")
-      respondWith(nil, .internalServerError)
+      respondWith(["response": "Hello \(user["name"] ?? "")!"], .internalServerError)
       return
     }
 
@@ -122,7 +122,7 @@ public class Controller {
         respondWith(nil, .internalServerError)
         return
       }
-      
+
       db.create(JSON(user), callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
         if let error = error {
           Log.error(">> Could not persist document to database.")
