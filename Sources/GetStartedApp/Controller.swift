@@ -110,9 +110,10 @@ public class Controller {
   * </code>
   */
   public func addVisitors(user: [String: String], respondWith: @escaping ([String: String]?, RequestError?) -> Void) {
+    
     guard let name = user["name"], let dbMgr = self.dbMgr else {
       Log.warning(">> No database manager.")
-      respondWith(["response": "Hello \(user["name"] ?? "")!"], .internalServerError)
+      respondWith(["response": "Hello \(user["name"] ?? "")!"], nil)
       return
     }
 

@@ -56,7 +56,7 @@
         function getNames(){
           $.get("./api/visitors")
               .done(function(data) {
-                  if(data.length > 0) {
+                  if(Object.keys(data).length === 0 && data.constructor === Object) {
                     data.forEach(function(element, index) {
                       data[index] = AntiXSS.sanitizeInput(element)
                     });
