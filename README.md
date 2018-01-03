@@ -15,7 +15,7 @@ To run locally and deploy from the command line, follow the instructions below. 
 
 * [Git](https://git-scm.com/downloads)
 * [IBM Cloud CLI](https://console.bluemix.net/docs/cli/reference/bluemix_cli/all_versions.html#bluemix-cli-installer-downloads)
-* [Swift 4.0.2 or newer](https://swift.org/download/) for your platform
+* [Swift 4.0.3 or newer](https://swift.org/download/) for your platform
 
 ## 1. Clone the sample app
 
