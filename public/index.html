@@ -34,7 +34,7 @@
         $('#user_name').keydown(function(e) {
         	var name = $('#user_name').val();
             if (e.which == 13 && name.length > 0) { //catch Enter key
-                $('#nameInput').hide();
+              $('#nameInput').hide();
            		$('#response').html("loading...");
             	//POST request to API to create a new visitor entry in the database
                 $.ajax({
@@ -44,22 +44,23 @@
                        data: JSON.stringify({name: name})
         				})
               .done(function(data) {
-                    var json = JSON.parse(AntiXSS.sanitizeInput(data))
-                  $('#response').html(json["response"]);
+                  var json = AntiXSS.sanitizeInput(data)
+                  $('#response').html(data["response"]);
                   $('#nameInput').hide();
-                    getNames();
+                  getNames();
               });
             }
         });
 
         //Retreive all the visitors from the database
         function getNames(){
-          $.get("./api/visitors")
+          $.getJSON("./api/visitors")
               .done(function(data) {
-                  if(Object.keys(data).length === 0 && data.constructor === Object) {
+                  if(Object.keys(data).length > 0) {
                     data.forEach(function(element, index) {
                       data[index] = AntiXSS.sanitizeInput(element)
                     });
+
                     $('#databaseNames').html("Database contents: " + JSON.stringify(data));
                   }
               });
