@@ -44,8 +44,8 @@
                        data: JSON.stringify({name: name})
         				})
               .done(function(data) {
-                  var json = AntiXSS.sanitizeInput(data)
-                  $('#response').html(data["response"]);
+                  var json = JSON.parse(AntiXSS.sanitizeInput(data))
+                  $('#response').html(json["response"]);
                   $('#nameInput').hide();
                   getNames();
               });
