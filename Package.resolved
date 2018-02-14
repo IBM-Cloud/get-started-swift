@@ -83,21 +83,21 @@
         }
       },
       {
-        "package": "Kitura-net",
-        "repositoryURL": "https://github.com/IBM-Swift/Kitura-net.git",
-        "state": {
-          "branch": null,
-          "revision": "d781655dcee403504e4f1eeaf3f62b12d78d8230",
-          "version": "2.0.1"
-        }
-      },
-      {
         "package": "Kitura-TemplateEngine",
         "repositoryURL": "https://github.com/IBM-Swift/Kitura-TemplateEngine.git",
         "state": {
           "branch": null,
           "revision": "8e75a213bf4dd7b5effd03848335e344535969aa",
           "version": "1.7.2"
+        }
+      },
+      {
+        "package": "Kitura-net",
+        "repositoryURL": "https://github.com/IBM-Swift/Kitura-net.git",
+        "state": {
+          "branch": null,
+          "revision": "d781655dcee403504e4f1eeaf3f62b12d78d8230",
+          "version": "2.0.1"
         }
       },
       {
@@ -128,6 +128,15 @@
         }
       },
       {
+        "package": "SSLService",
+        "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
+        "state": {
+          "branch": null,
+          "revision": "e414b1cc338eb89d718b68763ca554c7fde6c1f5",
+          "version": "0.12.71"
+        }
+      },
+      {
         "package": "Signals",
         "repositoryURL": "https://github.com/IBM-Swift/BlueSignals.git",
         "state": {
@@ -143,15 +152,6 @@
           "branch": null,
           "revision": "8913ba22906c14358519f9a4c8dbc18a0189aeb1",
           "version": "0.12.82"
-        }
-      },
-      {
-        "package": "SSLService",
-        "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
-        "state": {
-          "branch": null,
-          "revision": "e414b1cc338eb89d718b68763ca554c7fde6c1f5",
-          "version": "0.12.71"
         }
       },
       {

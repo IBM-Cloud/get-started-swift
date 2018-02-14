@@ -26,20 +26,27 @@ let package = Package(
       )
     ],
     dependencies: [
-    .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMinor(from: "1.7.1")),
-    .package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", .upToNextMajor(from: "6.0.0")),
-    .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.1.0")),
-    .package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", .upToNextMinor(from: "2.0.0")),
-    .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMajor(from: "17.0.0"))
     ],
     targets: [
       .target(
         name: "GetStartedServer",
-        dependencies: ["GetStartedApp"]
+        dependencies: ["GetStartedApp", "Utils", "Socket", "Configuration"]
       ),
       .target(
         name: "GetStartedApp",
-        dependencies: ["Kitura", "HeliumLogger", "SwiftyJSON", "CloudEnvironment", "CouchDB"]
+        dependencies: ["Configuration"]
+      ),
+      .target(
+        name: "Utils",
+        dependencies: []
+      ),
+      .target(
+        name: "Socket",
+        dependencies: []
+      ),
+      .target(
+        name: "Configuration",
+        dependencies: []
       ),
       .testTarget(
         name: "GetStartedTests",

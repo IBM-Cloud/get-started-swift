@@ -4,4 +4,4 @@ app:
     - "8080:8080"
   volumes:
     - .:/GetStartedSwift
-  command: bash -c "cd /GetStartedSwift && swift package --build-path .build-ubuntu clean && swift build --build-path .build-ubuntu && swift test --build-path .build-ubuntu && ./.build-ubuntu/debug/get-started-swift"
+  command: bash -c "cd /GetStartedSwift && swift build"
