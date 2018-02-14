@@ -5,7 +5,7 @@
 # Getting started with Swift on IBM Cloud
 The Getting Started tutorial for Swift uses this sample application to provide you with a sample workflow for working with any Swift app; you set up a development environment, deploy an app locally and on the cloud, and then integrate an IBM Cloud database service in your app.
 
-The Swift app uses the [Kitura CouchDB package](https://github.com/IBM-Swift/Kitura-CouchDB) to interact with the [Cloudant Java Client](https://github.com/cloudant/java-cloudant) to add information to a database and then return information from a database to the UI.
+The Swift app uses the [Kitura Web Framework](http://www.kitura.io/) and a [Cloudant NoSQL DB](https://console.bluemix.net/catalog/services/cloudant-nosql-db) to illustrate how to store information in a database and then return information from a database to the UI. To learn more about how the app connects to Cloudant, see the [Kitura CouchDB Library](https://github.com/IBM-Swift/Kitura-CouchDB).
 
 <p align="center">
   <kbd>
