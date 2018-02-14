@@ -30,7 +30,7 @@ let package = Package(
     targets: [
       .target(
         name: "GetStartedServer",
-        dependencies: ["GetStartedApp", "Utils", "Socket", "Configuration"]
+        dependencies: ["GetStartedApp", "Utils", "Socket"]
       ),
       .target(
         name: "GetStartedApp",

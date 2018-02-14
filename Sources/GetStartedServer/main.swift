@@ -30,6 +30,7 @@ import Foundation
 import Utils
 import Socket
 import Configuration
+import GetStartedApp
 
 let cloudantURL = "https://86d12a63-8bda-4c1c-b379-03a1484b7980-bluemix:19a141b76dd0b437b14eab615d623595d55730c8c3885ba471278337bf10281c@86d12a63-8bda-4c1c-b379-03a1484b7980-bluemix.cloudant.com"
 
@@ -37,11 +38,11 @@ let cloudantURL = "https://86d12a63-8bda-4c1c-b379-03a1484b7980-bluemix:19a141b7
 setbuf(stdout, nil)
 
 extension String {
-    
+
     var parseJSONString: [String: String]? {
         print(self)
         let data = self.data(using: .utf8, allowLossyConversion: false)
-        
+
         if let jsonData = data {
             return try! JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers) as? [String: String]
         } else {
@@ -70,7 +71,7 @@ func parseRequest(_ data: Data) -> Request {
     guard let str = String(data: data, encoding: .utf8) else {
         return .invalid
     }
-    
+
     let fields = str.split(separator: " ")
     let method = String(fields[0])
     let path = String(fields[1])
@@ -92,7 +93,7 @@ func log(counter: Int, clientSocket: Socket, bytes: Int) {
     print("Request #: \(counter).")
     print("Accepted connection from: \(clientSocket.remoteHostname) on port \(clientSocket.remotePort).")
     print("Number of bytes receieved from client: \(bytes)")
-    
+
     print("Sent http response to client...")
     print(">>>>>>>>>>>>>>>>>>>")
 }
@@ -106,13 +107,13 @@ enum Request {
 // Main functionality
 do {
     let (_, port) = parseAddress()
-    
+
     // Create server/listening socket
     let socket = try Socket.create()
     try socket.listen(on: port, maxBacklogSize: 10)
     print("Server is starting...")
     print("Server is listening on port: \(port).\n")
-   
+
     let env = ConfigManager()
 
     guard let credentials = env.getCloudantCredentials() else {
@@ -121,19 +122,19 @@ do {
     }
 
     let db = DatabaseManager(cloudantURL, credentials: credentials)
-    
+
     var counter = 0
-    
+
     while true {
         counter += 1
 
         // Replace the listening socket with the newly accepted connection...
         let clientSocket = try socket.acceptClientConnection()
-        
+
         // Read data from client before writing to the socket
         var data = Data()
         let numberOfBytes = try clientSocket.read(into: &data)
-        
+
         let req = parseRequest(data)
 
         let responseClosure = { (response: String) in
