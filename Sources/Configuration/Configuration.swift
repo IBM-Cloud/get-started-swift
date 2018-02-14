@@ -9,27 +9,40 @@ import Foundation
 
 public class ConfigManager {
 
-    public var services: [String: String] = [:]
+    public var services: [String: Any] = [:]
 
     public init() {
         load()
     }
 
     public func getCloudantCredentials() -> CloudantCredentials? {
-        let username = ""
-        let password = ""
-        let url = ""
-        return CloudantCredentials(url: url, username: username, password: password)
+        if let cloudant = services["cloudantNoSqlDB"] {
+            print(cloudant)
+        }
+        print(services)
+        return nil
     }
 
     private func load() {
-        services = [:]
         for (path, value) in ProcessInfo.processInfo.environment {
-            print("Path: ", path)
-            print("Value: ", value)
-            services[path] = value
+            if path == "VCAP_SERVICES", let services = convertToDictionary(value)] {
+                self.services = services
+                break
+            }
         }
     }
+
+    private func convertToDictionary(_ text: String) -> [String: Any]? {
+    if let data = text.data(using: .utf8) {
+        do {
+            return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    return nil
+}
+
 }
 
 public struct CloudantCredentials {
