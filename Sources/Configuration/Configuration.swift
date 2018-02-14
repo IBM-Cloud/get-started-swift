@@ -8,13 +8,13 @@
 import Foundation
 
 public class ConfigManager {
-    
+
     public var services: [String: String] = [:]
 
     public init() {
         load()
     }
-    
+
     public func getCloudantCredentials() -> CloudantCredentials? {
         let username = ""
         let password = ""
@@ -25,7 +25,8 @@ public class ConfigManager {
     private func load() {
         services = [:]
         for (path, value) in ProcessInfo.processInfo.environment {
-            print(path, value)
+            print("Path: ", path)
+            print("Value: ", value)
             services[path] = value
         }
     }

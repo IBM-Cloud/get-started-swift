@@ -6,4 +6,4 @@ applications:
    command: get-started-swift
    buildpack: swift_buildpack
    services:
-  - GetStartedCloudant
+       - GetStartedCloudant
