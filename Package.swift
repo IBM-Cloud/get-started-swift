@@ -30,11 +30,15 @@ let package = Package(
     targets: [
       .target(
         name: "GetStartedServer",
-        dependencies: ["GetStartedApp", "Utils", "Socket"]
+        dependencies: ["GetStartedApp"]
       ),
       .target(
         name: "GetStartedApp",
-        dependencies: ["Configuration"]
+        dependencies: ["Server"]
+      ),
+      .target(
+        name: "Server",
+        dependencies: ["Utils", "Socket"]
       ),
       .target(
         name: "Utils",
@@ -42,10 +46,6 @@ let package = Package(
       ),
       .target(
         name: "Socket",
-        dependencies: []
-      ),
-      .target(
-        name: "Configuration",
         dependencies: []
       ),
       .testTarget(
