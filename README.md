@@ -5,7 +5,7 @@
 # Getting started with Swift on IBM Cloud
 The Getting Started tutorial for Swift uses this sample application to provide you with a sample workflow for working with any Swift app; you set up a development environment, deploy an app locally and on the cloud, and then integrate an IBM Cloud database service in your app.
 
-The *estado* branch is meant to for ICp testing. It contains 0 dependencies, while retaining most of the functionality of the full api
+The *estado* branch is meant for ICp testing. It contains 0 dependencies, while retaining most of the functionality of the full application.
 
 ### API
 
@@ -13,13 +13,13 @@ The *estado* branch is meant to for ICp testing. It contains 0 dependencies, whi
 
 Returns all visitors.
 
-#### GET /database
-
-Responds with the current storage type
-
 #### POST /api/visitors
 
 Accepts json payloads of the form {"name": "your-name-here"}
+
+#### GET /database
+
+Responds with the current storage type
 
 ##### Response
 - Cloudant Bound : "Hello \(name)! You've been added to the cloudant database."
