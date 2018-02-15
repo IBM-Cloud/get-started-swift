@@ -71,8 +71,12 @@ func parseRequest(_ data: Data) -> Request {
     }
 
     let fields = str.split(separator: " ")
+    guard fields.count > 2 else {
+        return .invalid
+    }
     let method = String(fields[0])
     let path = String(fields[1])
+
     switch method {
     case "GET": return .get(path)
     case "POST":
@@ -114,17 +118,21 @@ do {
 
     let env = ConfigManager()
 
-    /*guard let credentials = env.getCloudantCredentials() else {
+    guard let credentials = env.getCloudantCredentials() else {
         print("Error: There are no credentials")
         exit(1)
-    }*/
-    let credentials = CloudantCredentials(url: "https://google.com", username: "", password: "")
+    }
+
     guard let db = DatabaseManager(credentials: credentials) else {
         print("Could not instantiate database")
         exit(1)
     }
 
     var counter = 0
+
+    db.createDB(failure: { str in print(str) }) { success in
+        print("Successfully created database")
+    }
 
     while true {
         counter += 1
@@ -146,7 +154,7 @@ do {
 
         switch req {
         case .get("/visitors"):
-            db.findAll { names in
+            db.findAll(failure: responseClosure) { names in
                 guard let names = names else {
                     return
                 }
@@ -154,7 +162,7 @@ do {
                 responseClosure(resp)
             }
         case .post("/visitors", let name):
-            db.insert(name) { success in
+            db.insert(name, failure: responseClosure) { success in
                 responseClosure(generateHttpResponse())
             }
         default:

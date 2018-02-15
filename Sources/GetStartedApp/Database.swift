@@ -24,27 +24,28 @@ public struct DatabaseManager {
         self.credentials = credentials
     }
 
-    public func createDB(_ handler: @escaping (Bool) -> Void) {
+    public func createDB(failure: @escaping (String) -> Void, success: @escaping (Bool) -> Void) {
         var request = URLRequest(url: baseURL.appendingPathComponent(dbName))
         request.httpMethod = "PUT"
 
-        makeRequest(request) { json in
+        makeRequest(request, failure: failure) { json in
             if let ok = json["ok"] as? Int, ok == 1 {
                 print("successfully created database")
             } else if let error = json["error"] as? String, error == "file_exists" {
                 print("database has already been created")
             } else {
-                handler(false)
+                failure("Unexpected response")
                 return
             }
-            handler(true)
+            success(true)
         }
     }
 
-    public func findAll(_ handler: @escaping ([String]?) -> Void) {
+    public func findAll(failure: @escaping (String) -> Void, success: @escaping ([String]?) -> Void) {
         guard var components = URLComponents(url: baseURL.appendingPathComponent(dbName + "/_all_docs"),
                                              resolvingAgainstBaseURL: false) else {
-                                                return
+            failure("Could not create components")
+            return
         }
 
         components.queryItems = [URLQueryItem(name: "include_docs", value: "true")]
@@ -52,11 +53,12 @@ public struct DatabaseManager {
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
 
-        makeRequest(request) { json in
+        makeRequest(request, failure: failure) { json in
             guard let rows = json["rows"] as? [[String: Any]] else {
+                failure("Rows do not exist")
                 return
             }
-            handler(rows.map {
+            success(rows.map {
                 guard let doc = $0["doc"] as? [String: Any], let name = doc["name"] as? String else {
                     return ""
                 }
@@ -65,9 +67,10 @@ public struct DatabaseManager {
         }
     }
 
-    public func insert(_ name: String, success: @escaping ([String: Any]) -> Void) {
+    public func insert(_ name: String, failure: @escaping (String) -> Void, success: @escaping ([String: Any]) -> Void) {
 
         guard let data = try? JSONSerialization.data(withJSONObject: ["name": name], options: .prettyPrinted) else {
+            failure("Could not serialize data")
             return
         }
 
@@ -76,8 +79,8 @@ public struct DatabaseManager {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = data
 
-        makeRequest(request) { json in
-            print(json)
+        makeRequest(request, failure: failure) { json in
+            success(json)
         }
     }
 
