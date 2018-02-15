@@ -24,8 +24,8 @@ public struct DatabaseManager {
     let dbName = "visitors"
     let session = URLSession(configuration: URLSessionConfiguration.default)
 
-    public init?(credentials: CloudantCredentials) {
-        guard let url = URL(string: credentials.url) else {
+    public init?(credentials: CloudantCredentials?) {
+        guard let credentials = credentials, let url = URL(string: credentials.url) else {
             return nil
         }
         self.baseURL = url

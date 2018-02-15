@@ -1,6 +1,21 @@
 import Foundation
 import Socket
 
+public enum ResponseBody: CustomStringConvertible {
+    case array([String])
+    case ok
+    case addedLocally(String)
+    case addedToDB(String)
+
+    public var description: String {
+        switch self {
+        case .array(let names)      : return "[" + names.map { "\"\($0)\"" }.joined(separator: ",") + "]"
+        case .ok                    : return "Hello! Welcome to the get-started-app!"
+        case .addedLocally(let name): return "Hello \(name)! You've been added to the local store."
+        case .addedToDB(let name)   : return "Hello \(name)! You've been added to the cloudant database."
+        }
+    }
+}
 public struct Request {
     public let method: Method
     public let path: String
@@ -11,32 +26,14 @@ public struct Response {
 
     let socket: Socket
 
-    public func send(array: [String]) {
-        let responseBody = "[" + array.map { "\"\($0)\"" }.joined(separator: ",") + "]"
-        let httpResponse = "HTTP/1.0 200 OK\n" + "Content-Type: text/plain; charset=UTF-8\n\n" + responseBody
-        execute(httpResponse)
-    }
-
-    public func send(name: String) {
-        let responseBody = "Hello \(name)! You've been added to the database!"
-        let httpResponse = "HTTP/1.0 200 OK\n" + "Content-Type: text/plain; charset=UTF-8\n\n" + responseBody
-        execute(httpResponse)
-    }
-
-    public func send() {
-        let responseBody = "Success"
-        let httpResponse = "HTTP/1.0 200 OK\n" + "Content-Type: text/plain; charset=UTF-8\n\n" + responseBody
-        execute(httpResponse)
-    }
-
-    public func sendDefault() {
-        let responseBody = "Hello! Welcome to the get-started-app!"
+    public func send(_ response: ResponseBody) {
+        let responseBody = response.description
         let httpResponse = "HTTP/1.0 200 OK\n" + "Content-Type: text/plain; charset=UTF-8\n\n" + responseBody
         execute(httpResponse)
     }
 
     public func send(error: String) {
-        let responseBody = "An Error has occurs: \(error)"
+        let responseBody = "An error has occurred: \(error)"
         let httpResponse = "HTTP/1.0 404 Internal Server Error\n" + "Content-Type: text/plain; charset=UTF-8\n\n" + responseBody
         execute(httpResponse)
     }

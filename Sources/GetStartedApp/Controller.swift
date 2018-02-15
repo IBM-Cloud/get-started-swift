@@ -1,29 +1,20 @@
 import Server
 
-public struct Controller {
+public class Controller {
 
-    // Retrieve credentials
+    let db: DatabaseManager?
     let env = ConfigManager()
-    let db: DatabaseManager
+    var names: [String] = []
 
     public let router = Router()
 
-    public init?() {
-        guard let credentials = env.getCloudantCredentials() else {
-            print("Error: Credentials not available")
-            return nil
-        }
+    public init() {
+        let credentials = env.getCloudantCredentials()
 
-        guard let db = DatabaseManager(credentials: credentials) else {
-            print("Could not instantiate database")
-            return nil
-        }
+        self.db = DatabaseManager(credentials: credentials)
 
-        self.db = db
-
-        // Create db if necessary
-        db.createDB(failure: { str in print("Error:", str) }) { success in
-            print("Database Initialized")
+        if db == nil {
+            print("Cloudant not configured: using local store")
         }
 
         // setup routes
@@ -37,6 +28,11 @@ public struct Controller {
 
     private func get(request: Request, response: Response) {
 
+        guard let db = self.db else {
+            response.send(.array(names))
+            return
+        }
+
         let failure = { (error: String) in
             print("Error: ", error)
             response.send(error: error)
@@ -47,13 +43,20 @@ public struct Controller {
                 response.send(error: "Database error")
                 return
             }
-            response.send(array: names)
+            response.send(.array(names))
         }
     }
 
     private func post(request: Request, response: Response) {
+
         guard let name = request.body?["name"] else {
             response.send(error: "Name not provided in body")
+            return
+        }
+
+        guard let db = self.db else {
+            names.append(name)
+            response.send(.addedLocally(name))
             return
         }
 
@@ -63,7 +66,7 @@ public struct Controller {
         }
 
         db.insert(name, failure: failure) { success in
-            response.send(name: name)
+            response.send(.addedToDB(name))
         }
     }
 }

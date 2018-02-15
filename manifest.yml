@@ -5,5 +5,3 @@ applications:
    memory: 256M
    command: get-started-swift
    buildpack: swift_buildpack
-   services:
-       - GetStartedCloudant

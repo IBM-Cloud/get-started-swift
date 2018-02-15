@@ -31,10 +31,6 @@ public class ConfigManager {
                    print("Invalid Credentials", credentials)
                    return nil
                }
-               print("Rretrieved Credentials")
-               print(url)
-               print(username)
-               print(password)
                return CloudantCredentials(url: url, username: username, password: password)
            }
        }

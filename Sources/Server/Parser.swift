@@ -53,7 +53,6 @@ public struct Parser {
 extension String {
 
     var parseJSONString: [String: String]? {
-        print(self)
         let data = self.data(using: .utf8, allowLossyConversion: false)
 
         if let jsonData = data {

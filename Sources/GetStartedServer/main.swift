@@ -32,10 +32,7 @@ setbuf(stdout, nil)
 // Setup our server
 let (_, port) = parseAddress()
 
-guard let controller = Controller() else {
-    print("Could not instantiate controller")
-    exit(1)
-}
+let controller = Controller()
 
 // start our server
 let server = Server(port: port, router: controller.router)

@@ -58,7 +58,7 @@ public class Router {
         if let handler = routes[request.method] {
             handler(request, response)
         } else {
-            response.sendDefault()
+            response.send(.ok)
         }
     }
 }
