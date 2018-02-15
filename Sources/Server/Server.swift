@@ -33,7 +33,7 @@ public struct Server {
         try socket.listen(on: port, maxBacklogSize: 10)
 
         print("Server is starting...")
-        print("Server is listening on port: \(port).\n")
+        print("Server is listening on port: \(port).")
 
         while true {
 

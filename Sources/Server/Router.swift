@@ -47,7 +47,6 @@ public class Router {
     }
 
     public func get(_ path: String, handler: @escaping Handler) {
-        print(routes, path)
         routes[.get(path)] = handler
     }
 

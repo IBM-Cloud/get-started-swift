@@ -12,7 +12,7 @@ public enum ResponseBody: CustomStringConvertible {
     public var description: String {
         switch self {
         case .array(let names)      : return "[" + names.map { "\"\($0)\"" }.joined(separator: ",") + "]"
-        case .ok                    : return "Hello! Welcome to the get-started-app!"
+        case .ok                    : return "Hello! Welcome to the get-started-app\n\nSupported APIs:\n - GET /api/visitors \n - POST /api/visitors json body: {\"name\": \"<entername>\"}\n - GET /database"
         case .addedLocally(let name): return "Hello \(name)! You've been added to the local store."
         case .addedToDB(let name)   : return "Hello \(name)! You've been added to the cloudant database."
         case .hasLocalDatabase      : return "I'm using a local store."
