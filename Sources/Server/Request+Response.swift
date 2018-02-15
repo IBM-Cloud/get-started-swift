@@ -6,6 +6,8 @@ public enum ResponseBody: CustomStringConvertible {
     case ok
     case addedLocally(String)
     case addedToDB(String)
+    case hasLocalDatabase
+    case hasRemoteDatabase
 
     public var description: String {
         switch self {
@@ -13,6 +15,8 @@ public enum ResponseBody: CustomStringConvertible {
         case .ok                    : return "Hello! Welcome to the get-started-app!"
         case .addedLocally(let name): return "Hello \(name)! You've been added to the local store."
         case .addedToDB(let name)   : return "Hello \(name)! You've been added to the cloudant database."
+        case .hasLocalDatabase      : return "I'm using a local store."
+        case .hasRemoteDatabase     : return "I'm using a remote Cloudant instance."
         }
     }
 }

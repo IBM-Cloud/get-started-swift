@@ -24,8 +24,8 @@ public enum Method: Hashable, Equatable {
 
     public var hashValue: Int {
         switch self {
-        case .get(let str): return str.hashValue + "get".hashValue
-        case .post(let str): return str.hashValue + "post".hashValue
+        case .get(let str): return (str + "get").hashValue
+        case .post(let str): return (str + "post").hashValue
         }
     }
 
@@ -47,6 +47,7 @@ public class Router {
     }
 
     public func get(_ path: String, handler: @escaping Handler) {
+        print(routes, path)
         routes[.get(path)] = handler
     }
 

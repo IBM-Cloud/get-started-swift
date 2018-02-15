@@ -22,8 +22,17 @@ public class Controller {
     }
 
     private func setupRoutes() {
+        router.get("/database", handler: getDB)
         router.get("/api/visitors", handler: get)
         router.post("/api/visitors", handler: post)
+    }
+
+    private func getDB(request: Request, response: Response) {
+        if db != nil {
+            response.send(.hasRemoteDatabase)
+        } else {
+            response.send(.hasLocalDatabase)
+        }
     }
 
     private func get(request: Request, response: Response) {
