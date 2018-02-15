@@ -16,22 +16,18 @@ public class ConfigManager {
     }
 
     public func getCloudantCredentials() -> CloudantCredentials? {
-        if let service = services["cloudantNoSQLDB"] as? [String: Any] {
-           if let credentials = service["credentials"] as? [String: String] {
-               guard let url = credentials["url"], let username = credentials["username"], let password = credentials["password"] else {
-                   print("Could not cast", credentials)
+        if let service = services["cloudantNoSQLDB"] as? [Any] {
+           if let d = service[0] as? [String: Any], let credentials = d["credentials"] as? [String: Any] {
+               guard let url = credentials["url"] as? String, let username = credentials["username"] as? String, let password = credentials["password"] as? String else {
+                   print("Invalid Credentials", credentials)
                    return nil
                }
-               print("Success")
+               print("Rretrieved Credentials")
                print(url)
                print(username)
                print(password)
                return CloudantCredentials(url: url, username: username, password: password)
-           } else {
-               print("no credentials", service)
            }
-       } else {
-           print("no cloudantNoSQLDB", services)
        }
         return nil
     }
@@ -46,20 +42,25 @@ public class ConfigManager {
     }
 
     private func convertToDictionary(_ text: String) -> [String: Any]? {
-    if let data = text.data(using: .utf8) {
-        do {
-            return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-        } catch {
-            print(error.localizedDescription)
+        if let data = text.data(using: .utf8) {
+            do {
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            } catch {
+                print(error.localizedDescription)
+            }
         }
+        return nil
     }
-    return nil
-}
-
 }
 
 public struct CloudantCredentials {
-    let url: String
-    let username: String
-    let password: String
+    public let url: String
+    public let username: String
+    public let password: String
+
+    public init(url: String, username: String, password: String) {
+        self.url = url
+        self.password = password
+        self.username = username
+    }
 }

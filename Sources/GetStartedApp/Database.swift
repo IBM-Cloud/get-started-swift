@@ -14,10 +14,13 @@ public struct DatabaseManager {
     let credentials: CloudantCredentials
 
     let dbName = "visitors"
-    let session = URLSession.shared
+    let session = URLSession(configuration: URLSessionConfiguration.default)
 
-    public init(_ url: String, credentials: CloudantCredentials) {
-        self.baseURL = URL(string: url)!
+    public init?(credentials: CloudantCredentials) {
+        guard let url = URL(string: credentials.url) else {
+            return nil
+        }
+        self.baseURL = url
         self.credentials = credentials
     }
 

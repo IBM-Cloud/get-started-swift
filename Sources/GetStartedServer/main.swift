@@ -32,8 +32,6 @@ import Socket
 import Configuration
 import GetStartedApp
 
-let cloudantURL = "https://86d12a63-8bda-4c1c-b379-03a1484b7980-bluemix:19a141b76dd0b437b14eab615d623595d55730c8c3885ba471278337bf10281c@86d12a63-8bda-4c1c-b379-03a1484b7980-bluemix.cloudant.com"
-
 // Disable all buffering on stdout
 setbuf(stdout, nil)
 
@@ -116,12 +114,15 @@ do {
 
     let env = ConfigManager()
 
-    guard let credentials = env.getCloudantCredentials() else {
+    /*guard let credentials = env.getCloudantCredentials() else {
         print("Error: There are no credentials")
         exit(1)
+    }*/
+    let credentials = CloudantCredentials(url: "https://google.com", username: "", password: "")
+    guard let db = DatabaseManager(credentials: credentials) else {
+        print("Could not instantiate database")
+        exit(1)
     }
-
-    let db = DatabaseManager(cloudantURL, credentials: credentials)
 
     var counter = 0
 
