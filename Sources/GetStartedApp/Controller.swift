@@ -2,7 +2,6 @@ import Server
 
 public struct Controller {
 
-    let url = "https://583493c0-245f-4555-bb8a-b5f7e28e08c5-bluemix:0b2def979159d7a9d8542ba6570d7126a901a20a228f73a877dd9fae04b18cd3@583493c0-245f-4555-bb8a-b5f7e28e08c5-bluemix.cloudant.com"
     // Retrieve credentials
     let env = ConfigManager()
     let db: DatabaseManager
@@ -26,18 +25,18 @@ public struct Controller {
         db.createDB(failure: { str in print("Error:", str) }) { success in
             print("Database Initialized")
         }
-        
+
         // setup routes
         setupRoutes()
     }
 
     private func setupRoutes() {
-        router.get("/visitors", handler: get)
-        router.post("/visitors", handler: post)
+        router.get("/api/visitors", handler: get)
+        router.post("/api/visitors", handler: post)
     }
 
     private func get(request: Request, response: Response) {
-        
+
         let failure = { (error: String) in
             print("Error: ", error)
             response.send(error: error)
@@ -57,14 +56,14 @@ public struct Controller {
             response.send(error: "Name not provided in body")
             return
         }
-        
+
         let failure = { (error: String) in
             print("Error: ", error)
             response.send(error: error)
         }
 
         db.insert(name, failure: failure) { success in
-            response.send()
+            response.send(name: name)
         }
     }
 }

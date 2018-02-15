@@ -17,6 +17,12 @@ public struct Response {
         execute(httpResponse)
     }
 
+    public func send(name: String) {
+        let responseBody = "Hello \(name)! You've been added to the database!"
+        let httpResponse = "HTTP/1.0 200 OK\n" + "Content-Type: text/plain; charset=UTF-8\n\n" + responseBody
+        execute(httpResponse)
+    }
+
     public func send() {
         let responseBody = "Success"
         let httpResponse = "HTTP/1.0 200 OK\n" + "Content-Type: text/plain; charset=UTF-8\n\n" + responseBody
@@ -24,7 +30,7 @@ public struct Response {
     }
 
     public func sendDefault() {
-        let responseBody = "Hello! Welcome to the get-started-app"
+        let responseBody = "Hello! Welcome to the get-started-app!"
         let httpResponse = "HTTP/1.0 200 OK\n" + "Content-Type: text/plain; charset=UTF-8\n\n" + responseBody
         execute(httpResponse)
     }
