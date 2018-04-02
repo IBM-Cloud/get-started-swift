@@ -56,9 +56,8 @@ public struct DatabaseManager {
                 print("Successfully created database")
             } else if let error = json["error"] as? String, error == "file_exists" {
                 print("Database already exists!")
-                success()
             } else {
-                failure("Unexpected response")
+                failure("Error: \(json["error"] ?? "Unexpected response")")
                 return
             }
             success()
