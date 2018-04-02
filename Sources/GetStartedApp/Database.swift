@@ -15,6 +15,7 @@
  **/
 
 import Foundation
+import Dispatch
 
 public struct DatabaseManager {
 
@@ -30,9 +31,23 @@ public struct DatabaseManager {
         }
         self.baseURL = url
         self.credentials = credentials
+
+        let semaphore = DispatchSemaphore(value: 0)
+        var success = true
+
+        ensureDBIsCreated(failure: { error in
+                                print("Could not create database!");
+                                success = false;
+                                semaphore.signal() },
+                          success: { semaphore.signal() })
+
+        semaphore.wait()
+        if !success {
+            return nil
+        }
     }
 
-    public func createDB(failure: @escaping (String) -> Void, success: @escaping (Bool) -> Void) {
+    public func ensureDBIsCreated(failure: @escaping (String) -> Void, success: @escaping () -> Void) {
         var request = URLRequest(url: baseURL.appendingPathComponent(dbName))
         request.httpMethod = "PUT"
 
@@ -41,11 +56,12 @@ public struct DatabaseManager {
                 print("Successfully created database")
             } else if let error = json["error"] as? String, error == "file_exists" {
                 print("Database already exists!")
+                success()
             } else {
                 failure("Unexpected response")
                 return
             }
-            success(true)
+            success()
         }
     }
 
