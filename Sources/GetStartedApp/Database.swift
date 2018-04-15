@@ -36,7 +36,7 @@ public struct DatabaseManager {
         var success = true
 
         ensureDBIsCreated(failure: { error in
-                                print("Could not create database!");
+                                print("Could not create database! Error: \(error)")
                                 success = false;
                                 semaphore.signal() },
                           success: { semaphore.signal() })
@@ -54,10 +54,12 @@ public struct DatabaseManager {
         makeRequest(request, failure: failure) { json in
             if let ok = json["ok"] as? Int, ok == 1 {
                 print("Successfully created database")
+            } else if let ok = json["ok"] as? Bool, ok {
+                print("Successfully created database")
             } else if let error = json["error"] as? String, error == "file_exists" {
                 print("Database already exists!")
             } else {
-                failure("Error: \(json["error"] ?? "Unexpected response")")
+                failure("Error: received response: '\(json)'")
                 return
             }
             success()
