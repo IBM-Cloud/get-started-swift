@@ -33,6 +33,18 @@ public class ConfigManager {
                }
                return CloudantCredentials(url: url, username: username, password: password)
            }
+        }
+
+        // This is to account for cases where a Cloudant service broker is not available,
+        // and bound credentials must be provided to the application by 'user provided services' 
+        if let service = services["user-provided"] as? [Any] {
+           if let d = service[0] as? [String: Any], let credentials = d["credentials"] as? [String: Any] {
+               guard let url = credentials["url"] as? String, let username = credentials["username"] as? String, let password = credentials["password"] as? String else {
+                   print("Invalid Credentials", credentials)
+                   return nil
+               }
+               return CloudantCredentials(url: url, username: username, password: password)
+           }
        }
         return nil
     }
