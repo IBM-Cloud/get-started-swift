@@ -3,3 +3,4 @@
 *.xcodeproj/*
 *.DS_Store
 config/my-cloudant-credentials.json
+Package.resolved
