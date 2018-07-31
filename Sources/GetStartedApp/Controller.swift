@@ -1,26 +1,24 @@
-/*
-* Copyright IBM Corporation 2017
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/******************************************************************************
+ * Copyright IBM Corporation 2018                                             *
+ *                                                                            *
+ * Licensed under the Apache License, Version 2.0 (the "License");            *
+ * you may not use this file except in compliance with the License.           *
+ * You may obtain a copy of the License at                                    *
+ *                                                                            *
+ * http://www.apache.org/licenses/LICENSE-2.0                                 *
+ *                                                                            *
+ * Unless required by applicable law or agreed to in writing, software        *
+ * distributed under the License is distributed on an "AS IS" BASIS,          *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   *
+ * See the License for the specific language governing permissions and        *
+ * limitations under the License.                                             *
+ ******************************************************************************/
 
 import Foundation
 import Kitura
 import KituraContracts
-import SwiftyJSON
 import LoggerAPI
 import CloudEnvironment
-import CouchDB
 
 public class User: Codable {
   let name: String
@@ -28,6 +26,7 @@ public class User: Codable {
 public class Controller {
   public let router = Router()
   private let dbName = "mydb"
+  private let collectionName = "mycollection"
   private let dbMgr: DatabaseManager?
   private let cloudEnv = CloudEnv()
 
@@ -36,9 +35,18 @@ public class Controller {
   }
 
   public init() {
+
     // Get credentials for cloudant db
     let cloudantCredentials = cloudEnv.getCloudantCredentials(name: "MyCloudantDB")
-    dbMgr = DatabaseManager(dbName: dbName, credentials: cloudantCredentials)
+    // Get credentials for mongo db
+    let mongoCredentials = cloudEnv.getMongoDBCredentials(name: "MyMongoDB")
+    // Use a MongoDB instance if one is available. Otherwise, default to
+    // CloudantDB (if an instance is available).
+    if mongoCredentials != nil {
+      dbMgr = MongoDatabaseManager(dbName: dbName, credentials: mongoCredentials)
+    } else {
+      dbMgr = CloudantDatabaseManager(dbName: dbName, credentials: cloudantCredentials)
+    }
 
     setup()
   }
@@ -71,28 +79,15 @@ public class Controller {
       return
     }
 
-    dbMgr.getDatabase() { (db: Database?, error: NSError?) in
-      guard let db = db else {
-        Log.error(">> No database.")
-        respondWith(nil, .internalServerError)
-        return
-      }
-
-      db.retrieveAll(includeDocuments: true) { docs, error in
-        guard let docs = docs else {
-          Log.error(">> Could not read from database or none exists.")
-          respondWith(nil, .internalServerError)
-          return
-        }
-
-        Log.info(">> Successfully retrived all docs from db.")
-        let names = docs["rows"].map { _, row in
-          return row["doc"]["name"].string ?? ""
-        }
-
-        respondWith(names, nil)
-      }
+    let names: [String]? = dbMgr.getVisitors()
+    if names == nil {
+      Log.error(">> Could not read from database or none exists.")
+      respondWith(nil, .internalServerError)
+      return
     }
+
+    Log.info(">> Successfully retrieved all docs from db.")
+    respondWith(names, nil)
   }
 
   /**
@@ -117,26 +112,13 @@ public class Controller {
       return
     }
 
-    dbMgr.getDatabase() { (db: Database?, error: NSError?) in
-      guard let db = db else {
-        Log.error(">> No database.")
-        respondWith(nil, .internalServerError)
-        return
-      }
-
-      db.create(JSON(user), callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
-        if let error = error {
-          Log.error(">> Could not persist document to database.")
-          Log.error(">> Error: \(error)")
-          respondWith(["response": "Hello \(name)!"], .internalServerError)
-        } else if let document = document {
-          Log.info(">> Successfully created the following JSON document in CouchDB:\n\t\(document)")
-          respondWith(["response": "Hello \(name)! I added you to the database."], nil)
-        } else {
-          Log.error(">> Could not persist document to database.")
-          respondWith(["response": "Hello \(name)!"], nil)
-        }
-      })
+    let status: Bool = dbMgr.addVisitors(user: user)
+    if status {
+      Log.info(">> Successfully persisted the following name to the database:\n\t\(name)")
+      respondWith(["response": "Hello \(name)! I added you to the database."], nil)
+    } else {
+      Log.error(">> Could not persist document to database.")
+      respondWith(["response": "Hello \(name)!"], nil)
     }
   }
 }

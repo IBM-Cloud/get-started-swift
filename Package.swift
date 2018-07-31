@@ -30,7 +30,8 @@ let package = Package(
     .package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", .upToNextMajor(from: "6.0.0")),
     .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.4.0")),
     .package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", .upToNextMinor(from: "2.1.0")),
-    .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMajor(from: "17.0.0"))
+    .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMajor(from: "17.0.0")),
+    .package(url: "https://github.com/OpenKitten/MongoKitten.git", from: "4.0.0"),
     ],
     targets: [
       .target(
@@ -39,7 +40,7 @@ let package = Package(
       ),
       .target(
         name: "GetStartedApp",
-        dependencies: ["Kitura", "HeliumLogger", "SwiftyJSON", "CloudEnvironment", "CouchDB"]
+        dependencies: ["Kitura", "HeliumLogger", "SwiftyJSON", "CloudEnvironment", "CouchDB", "MongoKitten"]
       ),
       .testTarget(
         name: "GetStartedTests",
