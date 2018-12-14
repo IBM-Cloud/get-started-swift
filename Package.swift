@@ -1,7 +1,7 @@
-// swift-tools-version:4.0
+// swift-tools-version:4.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 /**
- * Copyright IBM Corporation 2017
+ * Copyright IBM Corporation 2017, 2018
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,11 @@ let package = Package(
       )
     ],
     dependencies: [
-    .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMinor(from: "1.7.1")),
-    .package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", .upToNextMajor(from: "6.0.0")),
+    .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", from: "1.7.1"),
+    .package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", from: "6.0.0"),
     .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.4.0")),
     .package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", .upToNextMinor(from: "2.1.0")),
-    .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMajor(from: "17.0.0")),
+    .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", from: "17.0.0"),
     .package(url: "https://github.com/OpenKitten/MongoKitten.git", from: "4.0.0"),
     ],
     targets: [

@@ -5,7 +5,7 @@
 # Getting started with Swift on IBM Cloud
 The Getting Started tutorial for Swift uses this sample application to provide you with a sample workflow for working with any Swift app; you set up a development environment, deploy an app locally and on the cloud, and then integrate an IBM Cloud database service in your app.
 
-The Swift app uses the [Kitura Web Framework](http://www.kitura.io/) and a [Cloudant NoSQL DB](https://console.bluemix.net/catalog/services/cloudant-nosql-db) to illustrate how to store information in a database and then return information from a database to the UI. To learn more about how the app connects to Cloudant, see the [Kitura CouchDB Library](https://github.com/IBM-Swift/Kitura-CouchDB).
+The Swift app uses the [Kitura Web Framework](http://www.kitura.io/) and a [Cloudant NoSQL DB](https://cloud.ibm.com/catalog/services/cloudant) to illustrate how to store information in a database and then return information from a database to the UI. To learn more about how the app connects to Cloudant, see the [Kitura CouchDB Library](https://github.com/IBM-Swift/Kitura-CouchDB).
 
 <p align="center">
   <kbd>
@@ -13,8 +13,8 @@ The Swift app uses the [Kitura Web Framework](http://www.kitura.io/) and a [Clou
   </kbd>
 </p>
 
-The following steps are the general procedure to set up and deploy your app to IBM Cloud. See more detailed instructions in the [Getting started tutorial for Swift](https://console.bluemix.net/docs/runtimes/swift/getting-started.html#getting-started-tutorial).
+The following steps are the general procedure to set up and deploy your app to IBM Cloud. See more detailed instructions in the [Getting started tutorial for Swift](https://cloud.ibm.com/docs/runtimes/swift/getting-started.html#getting-started-tutorial).
 
 ## Before you begin
 
-You'll need a [IBM Cloud account](https://console.ng.bluemix.net/registration/), [Git](https://git-scm.com/downloads), [Cloud Foundry CLI](https://github.com/cloudfoundry/cli#downloads), and [Swift](https://swift.org/download/) installed.
+You'll need a [IBM Cloud account](https://cloud.ibm.com/), [Git](https://git-scm.com/downloads), [IBM Cloud CLI](https://cloud.ibm.com/docs/cli/index.html#overview), and [Swift](https://swift.org/download/) installed.
