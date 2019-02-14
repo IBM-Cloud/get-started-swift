@@ -23,10 +23,22 @@ import SwiftyJSON
 
 class CloudantDatabaseManager: DatabaseManager {
 
-  private var db: Database? = nil
+  private var cloudant: Database?
   private let dbClient: CouchDBClient
   private let semaphore = DispatchSemaphore(value: 1)
   private let dbName: String
+
+  struct User: Document {
+    let _id: String?
+    var _rev: String?
+    var name: String
+
+    init(_id: String? = nil, _rev: String? = nil, name: String) {
+        self._id = _id
+        self._rev = _rev
+        self.name = name
+    }
+  }
 
   init?(dbName: String, credentials: CloudantCredentials?) {
     self.dbName = dbName
@@ -38,7 +50,7 @@ class CloudantDatabaseManager: DatabaseManager {
     }
 
     let connectionProperties = ConnectionProperties(host: credentials.host,
-      port: Int16(credentials.port),
+      port: UInt16(credentials.port),
       secured: true,
       username: credentials.username,
     password: credentials.password)
@@ -47,21 +59,23 @@ class CloudantDatabaseManager: DatabaseManager {
   }
 
   func getVisitors() -> [String]? {
-    var names: [String]? = nil
-    getDatabase() { (db: Database?, error: NSError?) in
-      guard let db = db else {
+    var names: [String]?
+    getDatabase { cloudant, error in
+      guard let cloudant = cloudant else {
         Log.error("No database is available.")
         return
       }
 
-      db.retrieveAll(includeDocuments: true) { docs, error in
+      cloudant.retrieveAll(includeDocuments: true) { docs, error in
         guard let docs = docs else {
           Log.error("Database retrieval operation failed.")
           return
         }
 
-        names = docs["rows"].map { _, row in
-          return row["doc"]["name"].string ?? ""
+        let users = docs.decodeDocuments(ofType: User.self)
+
+        names = users.map { user in
+            return user.name
         }
       }
     }
@@ -70,52 +84,59 @@ class CloudantDatabaseManager: DatabaseManager {
 
   func addVisitors(user: [String: String]) -> Bool {
     var outcome: Bool = false
-    getDatabase() { (db: Database?, error: NSError?) in
-      guard let db = db else {
+    getDatabase { cloudant, error in
+      guard let cloudant = cloudant else {
         Log.error("No database.")
-        outcome = false
         return
       }
-      db.create(JSON(user), callback: { (id: String?, rev: String?, document: JSON?, error: NSError?) in
-        if let error = error {
-          Log.error("Database insertion operation failed: \(error)")
-          outcome = false
-        } else if document != nil {
-          outcome = true
-        } else {
-          Log.error("Database insertion operation failed.")
-          outcome = false
+
+        guard let info = user["name"] else {
+            Log.error("Oops.")
+            return
         }
-      })
+
+      let doc = User(name: info)
+
+      cloudant.create(doc) { response, error in
+        if let error = error {
+            Log.error("Database insertion operation failed: \(error)")
+            return
+        }
+        guard let response = response else {
+            Log.error("Database insertion operation failed.")
+            return
+        }
+        outcome = response.ok
+      }
     }
     return outcome
   }
 
-  private func getDatabase(callback: @escaping (Database?, NSError?) -> ()) -> Void {
+  private func getDatabase(callback: @escaping (Database?, CouchDBError?) -> Void) {
     semaphore.wait()
 
-    if let database = db {
+    if let database = cloudant {
       semaphore.signal()
       callback(database, nil)
       return
     }
 
-    dbClient.dbExists(dbName) { (exists: Bool, error: NSError?) in
-      if exists {
+    dbClient.retrieveDB(dbName) { database, error in
+      if let database = database {
         Log.info("Database '\(self.dbName)' found.")
-        self.db = self.dbClient.database(self.dbName)
+        self.cloudant = database
         self.semaphore.signal()
-        callback(self.db, error)
+        callback(self.cloudant, error)
       } else {
-        self.dbClient.createDB(self.dbName) { (db: Database?, error: NSError?) in
-          if let _ = db, error == nil {
-            self.db = db
+        self.dbClient.createDB(self.dbName) { cloudant, error in
+          if let _ = cloudant, error == nil {
+            self.cloudant = cloudant
             Log.info("Database '\(self.dbName)' created.")
           } else {
             Log.error("Something went wrong... database '\(self.dbName)' was not created.")
           }
           self.semaphore.signal()
-          callback(self.db, error)
+          callback(self.cloudant, error)
         }
       }
     }

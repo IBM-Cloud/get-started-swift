@@ -1,0 +1,7 @@
+included:
+  - Sources
+  - Tests
+
+disabled_rules:
+  - unused_optional_binding
+  - identifier_name

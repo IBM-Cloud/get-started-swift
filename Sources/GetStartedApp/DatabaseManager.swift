@@ -19,7 +19,6 @@
 // operations is not needed by calling functions (i.e. the Controller class)
 // for different vendors.
 protocol DatabaseManager {
-  func getVisitors() -> [String]?
-  func addVisitors(user: [String: String]) -> Bool
+    func getVisitors() -> [String]?
+    func addVisitors(user: [String: String]) -> Bool
 }
-

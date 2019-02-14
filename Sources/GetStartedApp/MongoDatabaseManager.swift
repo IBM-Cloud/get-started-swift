@@ -22,7 +22,7 @@ import MongoKitten
 class MongoDatabaseManager: DatabaseManager {
 
   private let collectionName: String = "collectionName"
-  private var collection: MongoKitten.Collection? = nil
+  private var collection: MongoKitten.Collection?
 
   required init?(dbName: String, credentials: MongoDBCredentials?) {
     if credentials == nil {
@@ -53,11 +53,11 @@ class MongoDatabaseManager: DatabaseManager {
       Log.error("Database retrieval operation failed: \(error)")
       return nil
     }
-    return collectionSlice.map{String($0.dictionaryRepresentation["name"]!)!}
+    return collectionSlice.map {String($0.dictionaryRepresentation["name"]!)!}
   }
 
   public func addVisitors(user: [String: String]) -> Bool {
-    let name = user["name"];
+    let name = user["name"]
     let document: Document = Document(["name": name])
 
     do {

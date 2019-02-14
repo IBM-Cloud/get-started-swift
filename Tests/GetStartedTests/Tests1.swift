@@ -8,10 +8,9 @@ class Tests1: XCTestCase {
         XCTAssertEqual("Welcome", "Welcome")
     }
 
-
-    static var allTests : [(String, (Tests1) -> () throws -> Void)] {
+    static var allTests: [(String, (Tests1) -> () throws -> Void)] {
         return [
-            ("testExample", testExample),
+            ("testExample", testExample)
         ]
     }
 }
