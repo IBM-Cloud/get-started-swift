@@ -3,4 +3,5 @@
 *.xcodeproj/*
 *.DS_Store
 config/my-cloudant-credentials.json
+config/my-mongo-credentials.json
 Package.resolved

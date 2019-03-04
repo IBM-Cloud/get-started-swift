@@ -31,7 +31,7 @@ let package = Package(
     .package(url: "https://github.com/IBM-Swift/Kitura.git", from: "2.6.0"),
     .package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", from: "3.1.0"),
     .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", from: "17.0.0"),
-    .package(url: "https://github.com/OpenKitten/MongoKitten.git", from: "4.1.1")
+    .package(url: "https://github.com/OpenKitten/MongoKitten.git", from: "5.1.1")
     ],
     targets: [
       .target(

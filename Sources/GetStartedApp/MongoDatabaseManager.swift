@@ -17,55 +17,66 @@
 import CloudEnvironment
 import LoggerAPI
 import Foundation
+import Dispatch
 import MongoKitten
 
 class MongoDatabaseManager: DatabaseManager {
 
-  private let collectionName: String = "collectionName"
-  private var collection: MongoKitten.Collection?
-
-  required init?(dbName: String, credentials: MongoDBCredentials?) {
-    if credentials == nil {
-      Log.warning("Could not load credentials for MongoDB.")
-      return nil
+    private var collection: MongoKitten.Collection?
+    
+    init?(dbName: String, credentials: MongoDBCredentials?) {
+        guard let credentials = credentials else {
+            Log.warning("Could not load credentials for MongoDB.")
+            return
+        }
+        
+        do {
+            let connection = try MongoKitten.Database.synchronousConnect(credentials.uri)
+            Log.info("Initial MongoDB server connection succeeded.")
+            collection = connection[dbName]
+        } catch {
+            Log.error("Could not connect to MongoDB: \(error)")
+            return
+        }
+        
+        Log.info("Found and loaded credentials for MongoDB database.")
     }
 
-    var server: MongoKitten.Server!
-    do {
-      server = try MongoKitten.Server(credentials!.uri)
-      Log.info("Initial MongoDB server connection succeeded.")
-    } catch {
-      Log.error("Could not connect to MongoDB: \(error)")
-      return nil
+    public func getVisitors() -> [String]? {
+        var names: [String]?
+        guard let collectionSlice = collection?.find() else {
+            Log.error("Database retrieval operation failed.")
+            return nil
+        }
+
+        do {
+            let docs = try collectionSlice.getAllResults().wait()
+            
+            names = docs.map { doc in
+                return doc["name"] as! String
+            }
+        } catch {
+            Log.error("Could not retrieve the Collection Slice data.")
+        }
+        
+        return names
     }
 
-    let database: MongoKitten.Database = server[dbName]
-    collection = database["mycollection"]
-
-    Log.info("Found and loaded credentials for MongoDB database.")
-  }
-
-  public func getVisitors() -> [String]? {
-    var collectionSlice: MongoKitten.CollectionSlice<Document>!
-    do {
-      collectionSlice = try collection!.find()
-    } catch {
-      Log.error("Database retrieval operation failed: \(error)")
-      return nil
+    public func addVisitors(user: [String: String]) -> Bool {
+        let name = user["name"]
+        let document: Document = ["name": name]
+        
+        guard let future = collection?.insert(document) else {
+            Log.error("Database retrieval operation failed.")
+            return false
+        }
+        
+        do {
+            let response = try future.wait()
+            return response.isSuccessful
+        } catch {
+            Log.error("Database insertion operation failed: \(error)")
+            return false
+        }
     }
-    return collectionSlice.map {String($0.dictionaryRepresentation["name"]!)!}
-  }
-
-  public func addVisitors(user: [String: String]) -> Bool {
-    let name = user["name"]
-    let document: Document = Document(["name": name])
-
-    do {
-      try collection!.insert(document)
-    } catch {
-      Log.error("Database insertion operation failed: \(error)")
-      return false
-    }
-    return true
-  }
 }
