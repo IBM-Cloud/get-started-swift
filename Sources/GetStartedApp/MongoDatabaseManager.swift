@@ -23,13 +23,13 @@ import MongoKitten
 class MongoDatabaseManager: DatabaseManager {
 
     private var collection: MongoKitten.Collection?
-    
+
     init?(dbName: String, credentials: MongoDBCredentials?) {
         guard let credentials = credentials else {
             Log.warning("Could not load credentials for MongoDB.")
             return
         }
-        
+
         do {
             let connection = try MongoKitten.Database.synchronousConnect(credentials.uri)
             Log.info("Initial MongoDB server connection succeeded.")
@@ -38,7 +38,7 @@ class MongoDatabaseManager: DatabaseManager {
             Log.error("Could not connect to MongoDB: \(error)")
             return
         }
-        
+
         Log.info("Found and loaded credentials for MongoDB database.")
     }
 
@@ -51,26 +51,26 @@ class MongoDatabaseManager: DatabaseManager {
 
         do {
             let docs = try collectionSlice.getAllResults().wait()
-            
+
             names = docs.map { doc in
                 return doc["name"] as! String
             }
         } catch {
             Log.error("Could not retrieve the Collection Slice data.")
         }
-        
+
         return names
     }
 
     public func addVisitors(user: [String: String]) -> Bool {
         let name = user["name"]
         let document: Document = ["name": name]
-        
+
         guard let future = collection?.insert(document) else {
             Log.error("Database retrieval operation failed.")
             return false
         }
-        
+
         do {
             let response = try future.wait()
             return response.isSuccessful
