@@ -53,7 +53,12 @@ class MongoDatabaseManager: DatabaseManager {
             let docs = try collectionSlice.getAllResults().wait()
 
             names = docs.map { doc in
-                return doc["name"] as! String
+
+              guard let name = doc["name"] as? String else {
+                Log.error("Could not retrieve name from document record.")
+                return ""
+              }
+              return name
             }
         } catch {
             Log.error("Could not retrieve the Collection Slice data.")
