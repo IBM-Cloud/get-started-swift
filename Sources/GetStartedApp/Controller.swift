@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright IBM Corporation 2018                                             *
+ * Copyright IBM Corporation 2018, 2019                                       *
  *                                                                            *
  * Licensed under the Apache License, Version 2.0 (the "License");            *
  * you may not use this file except in compliance with the License.           *
@@ -105,7 +105,7 @@ public class Controller {
   * </code>
   */
   public func addVisitors(user: [String: String], respondWith: @escaping ([String: String]?, RequestError?) -> Void) {
-    
+
     guard let name = user["name"], let dbMgr = self.dbMgr else {
       Log.warning(">> No database manager.")
       respondWith(["response": "Hello \(user["name"] ?? "")!"], nil)

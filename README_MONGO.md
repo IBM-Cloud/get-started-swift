@@ -26,6 +26,8 @@ When deployed on IBM Cloud, this application **does not** require bound MongoDB 
 
 ## For Mac OS Users
 
+The most recent releases of the MongoKitten MongoDB database driver used by this application rely on the networking capabilities provided by [SwiftNIO](https://github.com/apple/swift-nio).  This networking stack requires `libressl`, which can be installed using `brew install libressl`.
+
 The MongoDB drivers will use Apple Secure Transport on Mac OS systems (rather than OpenSSL on Linux), and may not be able to connect to the database service. The below steps can be used to resolve this:
 
 1. Create a new file 'mongo.crt' and open it in a text editor.

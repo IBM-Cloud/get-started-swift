@@ -27,11 +27,11 @@ let package = Package(
     ],
     dependencies: [
     .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", from: "1.7.1"),
-    .package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", from: "6.0.0"),
-    .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.4.0")),
-    .package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", .upToNextMinor(from: "2.1.0")),
+    .package(url: "https://github.com/IBM-Swift/CloudEnvironment.git", from: "9.0.0"),
+    .package(url: "https://github.com/IBM-Swift/Kitura.git", from: "2.6.0"),
+    .package(url: "https://github.com/IBM-Swift/Kitura-CouchDB.git", from: "3.1.0"),
     .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", from: "17.0.0"),
-    .package(url: "https://github.com/OpenKitten/MongoKitten.git", from: "4.0.0"),
+    .package(url: "https://github.com/OpenKitten/MongoKitten.git", from: "5.1.1")
     ],
     targets: [
       .target(

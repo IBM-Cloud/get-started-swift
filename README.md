@@ -7,6 +7,8 @@ The Getting Started tutorial for Swift uses this sample application to provide y
 
 The Swift app uses the [Kitura Web Framework](http://www.kitura.io/) and a [Cloudant NoSQL DB](https://cloud.ibm.com/catalog/services/cloudant) to illustrate how to store information in a database and then return information from a database to the UI. To learn more about how the app connects to Cloudant, see the [Kitura CouchDB Library](https://github.com/IBM-Swift/Kitura-CouchDB).
 
+Alternatively, this app can [connect to a MongoDB service](./README_MONGO.md). As described, this functionality requires the `libressl`, which is needed when running the application locally on macOS, even if using Cloudant.  Install it with `brew install libressl`.
+
 <p align="center">
   <kbd>
     <img src="docs/GettingStarted.gif" width="300" style="1px solid" alt="Gif of the sample app contains a title that says, Welcome, a prompt asking the user to enter their name, and a list of the database contents which are the names Joe, Jane, and Bob. The user enters the name, Mary and the screen refreshes to display, Hello, Mary, I've added you to the database. The database contents listed are now Mary, Joe, Jane, and Bob.">

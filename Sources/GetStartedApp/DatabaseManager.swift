@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright IBM Corporation 2018                                             *
+ * Copyright IBM Corporation 2018, 2019                                             *
  *                                                                            *
  * Licensed under the Apache License, Version 2.0 (the "License");            *
  * you may not use this file except in compliance with the License.           *
@@ -19,7 +19,6 @@
 // operations is not needed by calling functions (i.e. the Controller class)
 // for different vendors.
 protocol DatabaseManager {
-  func getVisitors() -> [String]?
-  func addVisitors(user: [String: String]) -> Bool
+    func getVisitors() -> [String]?
+    func addVisitors(user: [String: String]) -> Bool
 }
-
