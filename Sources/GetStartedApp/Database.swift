@@ -15,6 +15,7 @@
  **/
 
 import Foundation
+import FoundationNetworking
 import Dispatch
 
 public struct DatabaseManager {
