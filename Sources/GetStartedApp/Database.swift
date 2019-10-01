@@ -15,7 +15,9 @@
  **/
 
 import Foundation
-import FoundationNetworking
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
+#endif
 import Dispatch
 
 public struct DatabaseManager {
