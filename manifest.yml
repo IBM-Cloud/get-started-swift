@@ -5,3 +5,5 @@ applications:
    memory: 256M
    command: get-started-swift
    buildpack: swift_buildpack
+env:
+   SWIFT_BUILD_DIR_CACHE: false  
